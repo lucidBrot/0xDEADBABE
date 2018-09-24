@@ -1,0 +1,53 @@
+variables:
+  VIS_CI_APP_NAME: 'test-project'
+  VIS_CI_DEPLOYMENT_SUBDOMAIN: 'changeme'
+
+stages:
+  - build
+  - deploy
+  - cleanup
+
+build:
+  tags:
+    - docker-runner
+  stage: build
+  script:
+    - do_default_build
+  only:
+    refs:
+      - staging
+      - production
+
+deploy:
+  tags:
+    - docker-runner
+  stage: deploy
+  environment:
+    name: $VIS_CI_APP_NAME-staging
+    url: https://$VIS_CI_DEPLOYMENT_SUBDOMAIN.$VIS_CI_DEPLOYMENT_DOMAIN
+  script:
+    - do_deployment
+  only:
+    refs:
+      - staging
+      - production
+
+cleanup:
+  tags:
+    - docker-runner
+  stage: cleanup
+  script:
+    - do_cleanup
+  when: manual
+  only:
+    refs:
+      - staging
+      - production
+
+.auto_devops: &auto_devops |
+  git clone --depth 1 git@gitlab.vis.ethz.ch:vis_cit/vis-ci-base.git
+  source vis-ci-base/ciscript.sh
+
+before_script:
+  - docker info
+  - *auto_devops
