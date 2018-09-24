@@ -3,7 +3,7 @@
 #
 # Test project
 
-FROM registry.vis.ethz.ch/public/test-project:bravo
+FROM registry.vis.ethz.ch/public/vis-base:bravo
 
 EXPOSE 80
 
