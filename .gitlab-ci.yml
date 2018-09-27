@@ -1,6 +1,6 @@
 variables:
-  VIS_CI_APP_NAME: 'project'
-  VIS_CI_DEPLOYMENT_SUBDOMAIN: 'changeme'
+  VIS_CI_APP_NAME: 'team8'
+  VIS_CI_DEPLOYMENT_SUBDOMAIN: 'team8'
 
 stages:
   - build
