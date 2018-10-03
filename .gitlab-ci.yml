@@ -1,3 +1,4 @@
+# Please do not change the first two variables!
 variables:
   VIS_CI_APP_NAME: 'team8'
   VIS_CI_DEPLOYMENT_SUBDOMAIN: 'team8'
