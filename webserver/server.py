@@ -2,7 +2,7 @@
 import os
 from flask import Flask
 from flask import request, send_from_directory, url_for
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, func
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -35,6 +35,10 @@ def helopost():
 # @FLASK_SERVER.route('/static/content')
 # def sample_route():
 #    return send_from_directory(STATIC_DIR, 'messages_typora.html')
+
+# Sample to call Stored Procedures
+# def callStoredProcedure():
+#    data = DB.session.query(func.SCHEMA.FUNC_NAME()).all()
 
 if __name__ == '__main__':
     main()
