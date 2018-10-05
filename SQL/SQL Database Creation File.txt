@@ -1,0 +1,122 @@
+-- #### TABLES ####
+
+-- LECTURE
+CREATE TABLE Lecture (
+	Lecture_ID serial PRIMARY KEY ,
+	Name varchar(128)
+);
+
+-- USER
+CREATE TABLE "User" (
+	User_ID serial PRIMARY KEY,
+	Username varchar(32) NOT NULL	
+);
+CREATE UNIQUE INDEX UIX_User ON "User" (Username);
+
+-- Assistant
+CREATE TABLE Assistant (
+	Assistant_ID int PRIMARY KEY REFERENCES "User" ON DELETE CASCADE,
+	IsActive boolean NOT NULL DEFAULT(true),
+	PictureData bytea
+);
+
+-- STUDENT
+CREATE TABLE Student (
+	Student_ID int PRIMARY KEY REFERENCES "User" ON DELETE CASCADE
+);
+
+-- TEACHES
+CREATE TABLE Teaches (
+	Assistant_ID int REFERENCES Assistant ON DELETE CASCADE,
+	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE,
+	PRIMARY KEY (Assistant_ID, Lecture_ID)
+);
+
+-- COMMENTARY
+CREATE TABLE Commentary (
+	Student_ID int REFERENCES Student ON DELETE CASCADE,
+	Assistant_ID int REFERENCES Assistant ON DELETE CASCADE,
+	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE,
+	Title varchar(64) NOT NULL,
+	Text varchar(1024) NOT NULL,
+	PRIMARY KEY (Assistant_ID, Lecture_ID)
+);
+
+-- RATING
+CREATE TABLE Rating (
+	Student_ID int REFERENCES Student ON DELETE CASCADE,
+	Assistant_ID int REFERENCES Assistant ON DELETE CASCADE,
+	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE,
+	Field int NOT NULL,
+	RatingValue int NOT NULL,
+	PRIMARY KEY (Student_ID, Assistant_ID, Lecture_ID)
+);
+
+-- ATTENDS
+CREATE TABLE Attends (
+	Student_ID int REFERENCES Student ON DELETE CASCADE,
+	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE,
+	PRIMARY KEY (Student_ID, Lecture_ID)
+);
+
+-- ASSISTS
+CREATE TABLE Assists (
+	Student_ID int REFERENCES Student ON DELETE CASCADE,
+	Assistant_ID int REFERENCES Assistant ON DELETE CASCADE,
+	PRIMARY KEY (Student_ID, Assistant_ID)
+);
+
+-- #### FUNCTIONS ####
+
+-- NOTIFY USER LOGIN
+CREATE OR REPLACE FUNCTION NotifyUserLogin (usrname varchar(32)) 
+RETURNS void AS $$
+  DECLARE user_id int;
+  BEGIN      
+      IF NOT EXISTS(SELECT * FROM "User" WHERE "User".Username = usrname)
+      THEN		  
+          INSERT INTO "User" (Username) VALUES (usrname) RETURNING "User".User_ID INTO user_id;
+          INSERT INTO Student (Student_ID) VALUES (user_id);
+      END IF;
+      RETURN;
+  END; 
+$$ LANGUAGE plpgsql;
+
+-- MAKE ASSISTANT
+CREATE OR REPLACE FUNCTION MakeAssistant (usrname varchar(32)) 
+RETURNS void AS $$
+  DECLARE user_id int;
+  BEGIN      
+	  SELECT "User".user_id FROM "User" WHERE Username = usrname INTO user_id;
+	  
+      IF user_id is NULL
+      THEN		  
+		RAISE EXCEPTION 'Nonexistent username --> %', usrname;          
+      END IF;
+	  
+	  IF EXISTS(SELECT * FROM Assistant WHERE Assistant_ID = user_id)
+	  THEN
+		RAISE EXCEPTION 'Already an assistant.';
+	  END IF;
+	  
+	  INSERT INTO Assistant (Assistant_ID) VALUES (user_id);
+	  
+      RETURN;
+  END; 
+$$ LANGUAGE plpgsql;
+
+-- MAKE ASSISTANT
+CREATE OR REPLACE FUNCTION AddLectureIfUnknown (new_name varchar(128)) 
+RETURNS int AS $$
+  DECLARE lecture_id int;
+  BEGIN      
+	  SELECT Lecture.Lecture_ID FROM Lecture WHERE Lecture.Name = new_name INTO lecture_id;
+	  
+      IF lecture_id is NULL
+      THEN		  
+		INSERT INTO Lecture (Name) VALUES (new_name) RETURNING Lecture.Lecture_ID INTO lecture_id;		
+      END IF;
+	  
+      RETURN lecture_id;
+  END; 
+$$ LANGUAGE plpgsql;
