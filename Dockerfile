@@ -1,10 +1,18 @@
-# @Copyright    VIS - Verein der Informatik Studierenden an der ETH Zurich.
-# @Author       Changeme <changeme@vis.ethz.ch>
+# @Author       Eric Mink <minker@vis.ethz.ch>
 #
 # Test project
 
 FROM registry.vis.ethz.ch/public/vis-base:bravo
 
-EXPOSE 80
+RUN apt-get update && apt-get install --no-install-recommends python3
 
-CMD ["sleep", "infinity"]
+WORKDIR /app/webserver
+
+COPY webserver/requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY webserver /app/webserver
+
+EXPOSE 80
+CMD ["python", "server.py"]

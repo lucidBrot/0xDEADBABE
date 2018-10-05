@@ -1,0 +1,20 @@
+name: visconServer
+channels:
+  - defaults
+dependencies:
+  - certifi=2018.8.24
+  - click=7.0
+  - flask=1.0.2
+  - itsdangerous=0.24
+  - jinja2=2.10
+  - markupsafe=1.0
+  - pip=10.0.1
+  - python=3.7.0
+  - setuptools=40.4.3
+  - vc=14.1
+  - vs2015_runtime=14.15.26706
+  - werkzeug=0.14.1
+  - wheel=0.32.0
+  - wincertstore=0.2
+prefix: C:\Users\eric\Anaconda3\envs\visconServer
+
