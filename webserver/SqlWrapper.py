@@ -157,6 +157,20 @@ def GetExerciseRatings (exercise_id, dbname, user, password, host, port):
         cur.close()
         conn.close()
         return ratings
+        
+"""
+Gets the comments for a specific exercise
+(Exercise_ID, User_ID, User_Nethz, Creation_Date, Title, Text)
+"""              
+def GetExerciseComments (exercise_id, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT * FROM GetExerciseComments(%s);", (exercise_id,)) 
+        ratings = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return ratings
 
 """
 Initialize Database
