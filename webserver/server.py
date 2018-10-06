@@ -17,7 +17,7 @@ DB_NAME = os.environ.get("RUNTIME_POSTGRES_DB_NAME")
 DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
-DEBUG_VERSION = "l"
+DEBUG_VERSION = "m"
 
 def main():
     FLASK_SERVER.run('0.0.0.0', port=80)
