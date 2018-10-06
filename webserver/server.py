@@ -51,8 +51,8 @@ def loadDebugCSV():
     # parse CSV
     csvData = parseDebugCSV()
     # tell database about csv content
-    dbInitializeTeachingAssistants(csvData)
-    return "csvData: {}".format(str(csvData))
+    problem = dbInitializeTeachingAssistants(csvData)
+    return "csvData: {}\r\n\r\nProblem:{}".format(str(csvData), problem)
 
 # CSV Logic: --------------------------------------------------------------
 
@@ -72,8 +72,11 @@ def parseDebugCSV():
 
 def dbInitializeTeachingAssistants(csvData):
     # TODO: do for all data
-    SqlWrapper.MakeAssistant(csvData[0][config.CSV_TA_NETHZ],
+    try:
+        SqlWrapper.MakeAssistant(csvData[0][config.CSV_TA_NETHZ],
             DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        return ""
+    except Exception as e: return str(e)
 
 
 if __name__ == '__main__':
