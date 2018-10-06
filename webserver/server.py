@@ -111,8 +111,11 @@ def userLogin():
 
 @FLASK_SERVER.route('/submitRatings', methods=["POST"]) #TODO: submit Votes from GUI
 def submitVotes():
-    ratingsListJSON = request.form.get('ratings')
-    ratingsList = json.loads(ratingsListJSON)
+    ratingsDictListJSON = request.form.get('ratings')
+    # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
+    ratingsDictList = json.loads(ratingsDictListJSON)
+    ratingsList = ratingsDictList.map(lambda dictionary: dictionary.values())
+
     user_nethz = session["nethz_cookie"]
     retStr = "Got ratings: {}".format(str(ratingsList))
     try:
@@ -173,21 +176,9 @@ def course():
 # CSV Logic: --------------------------------------------------------------
 
 def fillDatabase():
-    # Reusing the function from Eric for submitting exercises
-    # Filling the database with exercises automatically also fill the TA table and the course table
     data = parseDebugCSV()
     log = dbInitializeTeachingAssistants(data)
     print(log)
-
-    # Generating rating fields
-    rating_names = ["Speech Clarity", "Exercise Discussion", "Explanation of Theory"]
-    for rating_name in rating_names:
-        try:
-            SqlWrapper.MakeOrGetRatingField(rating_name, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        except Exception as e:
-            print("Exception! {}".format(str(e)))
-
-
 
 
 """
