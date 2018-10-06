@@ -103,6 +103,11 @@ def userLogin():
         retStr += "failed: {} <br/>".format(str(e))
     return retStr
 
+# Dynamic Templates: ------------------------------------------------------
+
+@FLASK_SERVER.route('/main_profile.html')
+def main_profile_template():
+    return flask.render_template('main_profile.jinja')
 
 
 # CSV Logic: --------------------------------------------------------------
