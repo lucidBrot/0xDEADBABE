@@ -109,7 +109,7 @@ def userLogin():
 #    return retStr
     return redirect("/courses.html", code=302)
 
-@FLASK_SERVER.route('/submitVotes', methods=["POST"]) #TODO: submit Votes from GUI
+@FLASK_SERVER.route('/submitRatings', methods=["POST"]) #TODO: submit Votes from GUI
 def submitVotes():
     ratingsList = request.form.get('ratings')
     user_nethz = session["nethz_cookie"]
@@ -148,7 +148,7 @@ def main_profile_template():
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lecture_name, attributes=attributes, comments=comments, exercise_id=ex_id)
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_id, attributes=attributes, comments=comments, exercise_id=ex_id)
     except Exception as e:
         return "Exception! {}".format(str(e))
 
