@@ -162,12 +162,12 @@ def main_profile_template():
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         attributes = []
         for rating in ratings:
-            (ex_id, title, value) = rating
+            (_, title, value) = rating
             percentage = config.RATING_SCALE_FACTOR*value
             attributes.append({"title" : title, "percentage" : percentage})
     
         # load comments from database
-        commentsList = SqlWrapper.GetExerciseComments(ex_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        commentsList = SqlWrapper.GetExerciseComments(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         comments=[]
         for comment in commentsList: 
             like_count_c = -1 #JASPER
@@ -189,14 +189,14 @@ def main_profile_edit_template():
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         attributes = []
-        ex_id = None
+        ex_ID = None
         for rating in ratings:
-            (ex_id, title, value) = rating
+            (ex_ID, title, value) = rating
             # percentage = 10*points
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_id, nethzName=session["nethz_cookie"])
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
 
@@ -205,7 +205,7 @@ def main_profile_edit_template():
 def course():
     course_ID = request.args.get('course_id', default = '0', type = int)
 #    TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
-#    (ex_id, assi_id, assi_nethz, lec_id, lec_name)[]
+#    (ex_ID, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     # list of TA dicts: id, nethz
     TAlist = [{'id': ta_id, 'nethz': ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
