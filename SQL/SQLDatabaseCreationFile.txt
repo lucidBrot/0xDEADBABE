@@ -167,7 +167,7 @@ RETURNS TABLE (
       WHERE EXISTS (SELECT * FROM Exercise 
                     WHERE Exercise.Lecture_ID = Lecture.Lecture_ID AND Exercise.IsActive = True);
                     
-      
+      Return;
   END; 
 $$ LANGUAGE plpgsql;    
 
