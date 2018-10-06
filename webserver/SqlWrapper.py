@@ -85,8 +85,7 @@ def AddComment (exercise_id, user_id, title, text, user_nethz, dbname, user, pas
         conn.commit()
         cur.close()
         conn.close()
-        return id
-        
+        return id        
 
 """
 Gets all active lectures as list of tuples
