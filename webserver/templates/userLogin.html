@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Courses
+    </title>
+
+    <script>
+
+        window.onload = function () {
+            if (window.jQuery) {
+                // jQuery is loaded
+                startWebsite();
+            } else {
+                // jQuery is not loaded
+                alert("jQuery doesn't Work");
+            }
+        }
+
+        function startWebsite() {
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="container col-md-4 col-offset-4" style="margin-top: 90px">
+        <h1 class="form-heading">Login Form</h1>
+            <div class="login-form">
+                <div class="main-div">
+                    <div class="panel">
+                        <p>Please enter your nethz username and password</p>
+                    </div>
+                    <form id="Login">
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="inputEmail" placeholder="Username">
+                        </div>
+                
+                        <div class="form-group">
+                
+                            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
