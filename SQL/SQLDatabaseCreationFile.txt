@@ -24,7 +24,7 @@ CREATE UNIQUE INDEX UIX_User ON "User" (Nethz_Name);
 
 -- TEACHES
 CREATE TABLE Exercise (
-	Exercise_ID int PRIMARY KEY,
+	Exercise_ID serial PRIMARY KEY,
 	Assistant_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE ON UPDATE CASCADE,
     IsActive boolean NOT NULL DEFAULT True
@@ -32,7 +32,7 @@ CREATE TABLE Exercise (
 
 -- COMMENTARY
 CREATE TABLE Commentary (
-	Commentary_ID int PRIMARY KEY,
+	Commentary_ID serial PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
 	Title varchar(64) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE Commentary (
 
 -- RATING
 CREATE TABLE Rating (
-    Rating_ID int PRIMARY KEY,
+    Rating_ID serial PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
 	Field int NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE Rating (
 
 -- RATING
 CREATE TABLE CommentaryLike (
-    CommentaryLike int PRIMARY KEY,
+    CommentaryLike serial PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Commentary_ID int REFERENCES Commentary ON DELETE CASCADE ON UPDATE CASCADE,
 	UNIQUE (User_ID, Commentary_ID)
@@ -60,7 +60,7 @@ CREATE TABLE CommentaryLike (
 
 -- ATTENDS
 CREATE TABLE Attendee (
-    Attendee_ID int PRIMARY KEY,
+    Attendee_ID serial PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
 	UNIQUE (User_ID, Exercise_ID)
