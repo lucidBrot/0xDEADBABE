@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3 python3
 WORKDIR /app/webserver
 
 COPY webserver/requirements.txt .
+COPY SQL ../SQL
 
 RUN pip3 install --upgrade pip
 
