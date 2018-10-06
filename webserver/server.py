@@ -120,22 +120,21 @@ def courses_template():
 def main_profile_template():
     TA_id = request.args.get('TA_id', default=0, type = int)
     course_id = request.args.get('course_id', default=0, type=int)
-    #TODO: actual facts
-    # Debug constants
-    TA_name = "Jasper Wurst"
-    lecture = "Lecture Name of Systems"
+    # get Facts from database
+    (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+    # TODO: load attributes from database!
     # percentage = 10*points
     attributes = [
             {"title" : "title", "percentage" : 88},
             {"title" : "Another one", "percentage" : 20}
             ]
     comments = []
-    return render_template('main_profile.html',TA_name=TA_name, lecture=lecture, attributes=attributes, comments=comments)
+    return render_template('main_profile.html',TA_name=assi_nethz, lecture=lecture_name, attributes=attributes, comments=comments)
 
 @FLASK_SERVER.route('/course.html', methods=["GET"])
 def course():
     course_ID = request.args.get('id', default = '0', type = int)
-    TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
+#    TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
 #    (ex_id, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     # list of TA dicts: name, id, nethz
