@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+{#
+TA_name
+lecture
+attributes -> attribute.title
+			attribute.percentage
+comments -> comment.title
+			comment.text
+			comment.lik_count
+			comment.author
+#}
 <html>
 
 <head>
@@ -56,6 +66,8 @@
 </nav>
 
 <p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }}</p>
+
+<script>var EXERCISE_ID = {{ exercise_id }};</script>
 
 <div class="container-fluid">
     <div class="row">
