@@ -47,11 +47,11 @@ def loadDebugCSV():
     # read whole initialization file into one string
     with open(config.SQL_INITIALIZATION_FILE, 'r') as content_file:
         sqlFile = content_file.read()
-    try:
+    #try:
         #SqlWrapper.InitializeDatabase(sqlFile, 
          #       DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-    except:
-        out+="ree!<br/><br/>"
+    #except:
+    #    out+="ree!<br/><br/>"
     # parse CSV
     csvData = parseDebugCSV()
     # tell database about csv content
