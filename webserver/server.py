@@ -6,6 +6,7 @@ import csv
 import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
 from io import StringIO
+from flask import render_template
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -105,13 +106,22 @@ def userLogin():
 
 # Dynamic Templates: ------------------------------------------------------
 
+@FLASK_SERVER.route('/courses.html')
+def courses_template():
+    return render_template('courses.html')
+
 @FLASK_SERVER.route('/main_profile.html')
 def main_profile_template():
-    return flask.render_template('main_profile.html')
-
-@FLASK_SERVER.route('/TA_profile.html')
-def main_profile_template():
-    return flask.render_template('TA_profile.html')
+    # Debug constants
+    TA_name = "Jasper Wurst"
+    lecture = "Lecture Name of Systems"
+    # percentage = 10*points
+    attributes = [
+            {"title" : "title", "percentage" : 88},
+            {"title" : "Another one", "percentage" : 20}
+            ]
+    comments = []
+    return render_template('main_profile.html',TA_name=TA_name, lecture=lecture, attributes=attributes, comments=comments)
 
 
 
