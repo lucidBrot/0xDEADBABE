@@ -19,11 +19,10 @@ DB_NAME = os.environ.get("RUNTIME_POSTGRES_DB_NAME")
 DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
-DEBUG_VERSION = "ababC"
+DEBUG_VERSION = "abab"
 
 def main():
     initDatabase()
-    fillDatabase()
     FLASK_SERVER.run('0.0.0.0', port=80)
 
 def initDatabase():
@@ -105,6 +104,18 @@ def userLogin():
         retStr += "failed: {} <br/>".format(str(e))
     return retStr
 
+@FLASK_SERVER.route('/submitVotes', methods=["POST"])
+def submitVotes():
+    ratingsList = request.form.get('ratings')
+    user_nethz = request.form.get('nethz')
+    retStr = "Got ratings: {}".format(str(ratingsList))
+    try:
+        SqlWrapper.AddExerciseRatings(ratingsList, user_nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        retStr+="<br/>...done."
+    except Exception as e:
+        retStr += "<br/>...failed: {} <br/>".format(str(e))
+    return retStr
+
 # Dynamic Templates: ------------------------------------------------------
 
 @FLASK_SERVER.route('/courses.html')
@@ -133,7 +144,7 @@ def main_profile_template():
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments)
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lecture_name, attributes=attributes, comments=comments)
     except Exception as e:
         return "Exception! {}".format(str(e))
 
@@ -143,22 +154,13 @@ def course():
 #    TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
 #    (ex_id, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-    # list of TA dicts: id, nethz
-    TAlist = [{'id': ta_id, 'nethz': ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
-    
-    # Setting the lecture name. If resultlist is empty for some reason, this is the default we use for now
-    lec_name = "Empty lecture"
-    if len(resultlist) != 0:
-        (_, _, _, _, lec_name) = resultlist[0]
+    # list of TA dicts: name, id, nethz
+    TAlist = [{name, ta_id, ta_nethz} for _, ta_id, ta_nethz, __, name in resultlist]
+    (_, _, _, _, lec_name) = resultlist[0]
     return render_template('course.html',course_id = course_ID, TA_data=TAlist, course_name=lec_name)
 
 
 # CSV Logic: --------------------------------------------------------------
-
-def fillDatabase():
-    data = parseDebugCSV()
-    log = dbInitializeTeachingAssistants(data)
-    print(log)
 
 """
 return: a list of OrderedDictionaries with the keys config.CSV_TA_NETHZ and CSV_TA_NETHZ
@@ -176,7 +178,7 @@ def parseDebugCSV():
 
 def dbInitializeTeachingAssistants(csvData):
     returnString = ""
-    # Clear Exercises 
+    # Clear Exercises
     try:
         SqlWrapper.ClearExercises(DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e:
