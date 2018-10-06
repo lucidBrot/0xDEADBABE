@@ -227,7 +227,7 @@ RETURNS TABLE (
       JOIN Rating ON Rating.Exercise_ID = Exercise.Exercise_ID
       JOIN RatingField ON Rating.RatingField_ID = RatingField.RatingField_ID
       WHERE Exercise.Exercise_ID = exer_id AND RatingField.IsActive = TRUE
-      GROUP BY RatingField.RatingField_ID;
+      GROUP BY Exercise.Exercise_ID, RatingField.RatingField_ID;
   END; 
 $$ LANGUAGE plpgsql; 
 

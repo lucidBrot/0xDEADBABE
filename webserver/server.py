@@ -19,7 +19,7 @@ DB_NAME = os.environ.get("RUNTIME_POSTGRES_DB_NAME")
 DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
-DEBUG_VERSION = "abab"
+DEBUG_VERSION = "ababC"
 
 def main():
     initDatabase()
@@ -133,7 +133,7 @@ def main_profile_template():
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lecture_name, attributes=attributes, comments=comments)
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments)
     except Exception as e:
         return "Exception! {}".format(str(e))
 
@@ -176,7 +176,7 @@ def parseDebugCSV():
 
 def dbInitializeTeachingAssistants(csvData):
     returnString = ""
-    # Clear Exercises
+    # Clear Exercises 
     try:
         SqlWrapper.ClearExercises(DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e:

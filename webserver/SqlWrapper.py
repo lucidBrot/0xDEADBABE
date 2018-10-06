@@ -49,6 +49,22 @@ def ClearExercises (dbname, user, password, host, port):
         conn.close()
 
 """
+Takes a list of triples (exercise_id, rating_title, rating_value)
+"""
+def AddExerciseRatings (ratings_list, user_nethz, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()
+        # ratings_list is a list of several (Exercise_ID, Rating_Title, Rating_Value)
+        for (exercise_id, rating_title, rating_value) in ratings_list
+            cur.execute("DO $$ BEGIN PERFORM AddExerciseRatings(%s, %s, %s, %s); END; $$;",(exercise_id, rating_title, user_nethz, rating_value))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
+        
+
+"""
 Gets all active lectures as list of tuples
 (Lecture_ID: int, Lecture_Name: varchar(128))[]
 """
