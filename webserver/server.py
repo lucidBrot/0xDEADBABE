@@ -144,7 +144,7 @@ def course():
 #    (ex_id, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     # list of TA dicts: name, id, nethz
-    TAlist = [{name, ta_id, ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
+    TAlist = [{'id': ta_id, 'nethz': ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
     (_, _, _, _, lec_name) = resultlist[0]
     return render_template('course.html', course_id = course_ID, TA_data=TAlist, course_name=lec_name)
 
