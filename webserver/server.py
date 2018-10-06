@@ -164,6 +164,7 @@ def main_profile_template():
         return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_id, attributes=attributes, comments=comments, exercise_id=ex_id, nethz=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
+    # TODO: ability to like comment
 
 # exactly same thing again, but without comments
 @FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
