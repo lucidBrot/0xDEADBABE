@@ -98,7 +98,7 @@ nethz: which user logged in
 @FLASK_SERVER.route('/userLogin', methods=["POST"])
 def userLogin():
     nethz = request.form.get('nethz')
-    redirect = '<meta http-equiv="refresh" content="0"; url="/courses.html" />'
+    redirect = '<script>window.location.replace("/courses.html");</script>'
     retStr = "{}{} logged in. Tellling DB...<br/>".format(redirect,nethz)
     try:
         SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
