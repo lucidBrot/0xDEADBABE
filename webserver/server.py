@@ -23,6 +23,7 @@ DEBUG_VERSION = "abab"
 
 def main():
     initDatabase()
+    fillDatabase()
     FLASK_SERVER.run('0.0.0.0', port=80)
 
 def initDatabase():
@@ -142,13 +143,22 @@ def course():
 #    TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
 #    (ex_id, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-    # list of TA dicts: name, id, nethz
+    # list of TA dicts: id, nethz
     TAlist = [{'id': ta_id, 'nethz': ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
-    (_, _, _, _, lec_name) = resultlist[0]
+    
+    # Setting the lecture name. If resultlist is empty for some reason, this is the default we use for now
+    lec_name = "Empty lecture"
+    if len(resultlist) != 0:
+        (_, _, _, _, lec_name) = resultlist[0]
     return render_template('course.html',course_id = course_ID, TA_data=TAlist, course_name=lec_name)
 
 
 # CSV Logic: --------------------------------------------------------------
+
+def fillDatabase():
+    data = parseDebugCSV()
+    log = dbInitializeTeachingAssistants(data)
+    print(log)
 
 """
 return: a list of OrderedDictionaries with the keys config.CSV_TA_NETHZ and CSV_TA_NETHZ
