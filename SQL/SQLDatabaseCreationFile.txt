@@ -39,6 +39,7 @@ CREATE TABLE Commentary (
 	Commentary_ID serial PRIMARY KEY,	
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
     User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
+    Creation_Date timestamp NOT NULL DEFAULT(CURRENT_TIMESTAMP),
 	Title varchar(64) NOT NULL,
 	Text varchar(1024) NOT NULL,
 	UNIQUE (User_ID, Exercise_ID)
@@ -188,7 +189,8 @@ RETURNS TABLE (
 	  RETURN QUERY SELECT Lecture.Lecture_ID, Lecture.Name 
       FROM Lecture
       WHERE EXISTS (SELECT * FROM Exercise 
-                    WHERE Exercise.Lecture_ID = Lecture.Lecture_ID AND Exercise.IsActive = True);
+                    WHERE Exercise.Lecture_ID = Lecture.Lecture_ID AND Exercise.IsActive = True)
+      ORDER BY Lecture.Name ASC;
                     
       Return;
   END; 
@@ -209,7 +211,8 @@ RETURNS TABLE (
       FROM Exercise
       JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
       JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
-      WHERE Exercise.IsActive = True;    
+      WHERE Exercise.IsActive = True
+      ORDER BY Lecture.Name ASC;    
   END; 
 $$ LANGUAGE plpgsql; 
                     
@@ -250,7 +253,33 @@ RETURNS TABLE (
       JOIN Rating ON Rating.Exercise_ID = Exercise.Exercise_ID
       JOIN RatingField ON Rating.RatingField_ID = RatingField.RatingField_ID
       WHERE Exercise.Exercise_ID = exer_id AND RatingField.IsActive = TRUE
-      GROUP BY Exercise.Exercise_ID, RatingField.RatingField_ID;
+      GROUP BY Exercise.Exercise_ID, RatingField.RatingField_ID
+      ORDER BY RatingField.Title ASC;
+  END; 
+$$ LANGUAGE plpgsql; 
+
+DROP FUNCTION IF EXISTS GetExerciseComments(int);
+
+-- GET LECTURE ASSISTANTS
+CREATE OR REPLACE FUNCTION GetExerciseComments (exec_id int) 
+RETURNS TABLE (
+    Exercise_ID int,
+    User_ID int,
+    User_Nethz varchar(32),
+    Creation_Date timestamp,
+    Title varchar(64),
+    Text varchar(1024)
+  )
+  AS $$
+  BEGIN        
+	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Nethz_Name, Commentary.Creation_Date, Commentary.Title, Commentary.Text
+      FROM Exercise
+      JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
+      JOIN Commentary ON Commentary.Exercise_ID = Exercise.Exercise_ID
+      WHERE Exercise.Exercise_ID = exec_id
+      GROUP BY Commentary.Commentary_ID
+      ORDER BY (SELECT COUNT(*) FROM CommentaryLike WHERE CommentaryLike.Commentary_ID = Commentary.Commentary_ID) DESC
+      THEN BY Commentary.Creation_Date DESC;      
   END; 
 $$ LANGUAGE plpgsql; 
 
@@ -286,6 +315,8 @@ RETURNS void
       VALUES (exec_id, ratingFld_id, usr_id, rating);
   END; 
 $$ LANGUAGE plpgsql; 
+
+DROP FUNCTION IF EXISTS AddComment(int, int, varchar(64), varchar(1024));
 
 -- GET LECTURE ASSISTANTS
 CREATE OR REPLACE FUNCTION AddComment (exec_id int, usr_id int, titl varchar(64), txt varchar(1024)) 
