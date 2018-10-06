@@ -99,12 +99,13 @@ def userLogin():
     retStr = "{} logged in. Tellling DB...<br/>".format(nethz)
     try:
         SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        # TODO: Get guid and create cookie.
         retStr += "done.<br/>"
     except Exception as e:
         retStr += "failed: {} <br/>".format(str(e))
-    return retStr
+    return retStr # TODO: anwer with cookie
 
-@FLASK_SERVER.route('/submitVotes', methods=["POST"])
+@FLASK_SERVER.route('/submitVotes', methods=["POST"]) #TODO: submit Votes from GUI
 def submitVotes():
     ratingsList = request.form.get('ratings')
     user_nethz = request.form.get('nethz')
