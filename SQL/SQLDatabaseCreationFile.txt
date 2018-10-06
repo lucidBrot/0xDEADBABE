@@ -1,11 +1,12 @@
 -- #### TABLES ####
 
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
-
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO public;
-GRANT ALL ON SCHEMA public TO team8_db_user_staging;
+DROP TABLE IF EXISTS CommentaryLike;
+DROP TABLE IF EXISTS Commentary;
+DROP TABLE IF EXISTS Rating;
+DROP TABLE IF EXISTS Attendee;
+DROP TABLE IF EXISTS Exercise;
+DROP TABLE IF EXISTS Lecture;
+DROP TABLE IF EXISTS "User";
 
 -- LECTURE
 CREATE TABLE Lecture (
@@ -68,7 +69,7 @@ CREATE TABLE Attendee (
 -- #### FUNCTIONS ####
 
 -- NOTIFY USER LOGIN
-CREATE FUNCTION MakeOrGetUser (nethz varchar(32)) 
+CREATE OR REPLACE FUNCTION MakeOrGetUser (nethz varchar(32)) 
 RETURNS int AS $$
   DECLARE user_id int;
   BEGIN      
@@ -87,7 +88,7 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql;
 
 -- NOTIFY USER LOGIN
-CREATE FUNCTION MakeOrGetLecture (lecture_name varchar(128)) 
+CREATE OR REPLACE FUNCTION MakeOrGetLecture (lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE lect_id int;
   BEGIN  
@@ -106,7 +107,7 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql;
 
 -- MAKE EXERCISE
-CREATE FUNCTION MakeOrGetExercise (nethz varchar(32), lecture_name varchar(128)) 
+CREATE OR REPLACE FUNCTION MakeOrGetExercise (nethz varchar(32), lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE exer_id int;
   DECLARE user_id int;
@@ -133,7 +134,7 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql;
 																	 
 -- CLEAR EXERCISES
-CREATE FUNCTION ClearExercises () 
+CREATE OR REPLACE FUNCTION ClearExercises () 
 RETURNS void AS $$
   BEGIN        
 	  UPDATE Exercise SET IsActive = False;	  
@@ -142,7 +143,7 @@ RETURNS void AS $$
 $$ LANGUAGE plpgsql;  
 
 -- GET ACTIVE LECTURES
-CREATE FUNCTION GetActiveLectures () 
+CREATE OR REPLACE FUNCTION GetActiveLectures () 
 RETURNS TABLE (
     Lecture_ID int,
     Name varchar(128)
@@ -159,7 +160,7 @@ RETURNS TABLE (
 $$ LANGUAGE plpgsql;    
 
 -- GET ACTIVE EXERCISES
-CREATE FUNCTION GetActiveExercises () 
+CREATE OR REPLACE FUNCTION GetActiveExercises () 
 RETURNS TABLE (
     Exercise_ID int,
     Assistant_ID int,
