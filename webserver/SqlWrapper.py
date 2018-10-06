@@ -64,12 +64,12 @@ def ClearExercises (dbname, user, password, host, port):
 """
 Takes a list of triples (exercise_id, rating_title, rating_value)
 """
-def AddExerciseRatings (ratings_list, user_nethz, dbname, user, password, host, port):
+def AddExerciseRatings (ratings_list, user_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()
         # ratings_list is a list of several (Exercise_ID, Rating_Title, Rating_Value)
-        for (exercise_id, rating_title, rating_value) in ratings_list:
-            cur.execute("DO $$ BEGIN PERFORM AddExerciseRatings(%s, %s, %s, %s); END; $$;",(exercise_id, rating_title, user_nethz, rating_value))
+        for (exercise_id, ratingField_id, rating_value) in ratings_list:
+            cur.execute("DO $$ BEGIN PERFORM AddExerciseRatings(%s, %s, %s, %s); END; $$;",(exercise_id, ratingField_id, user_id, rating_value))
         conn.commit()
         cur.close()
         conn.close()
@@ -77,7 +77,7 @@ def AddExerciseRatings (ratings_list, user_nethz, dbname, user, password, host, 
 """
 Adds a new comment from the given user to the given exercise with title and text.
 """
-def AddComment (exercise_id, user_id, title, text, user_nethz, dbname, user, password, host, port):
+def AddComment (exercise_id, user_id, title, text, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()
         cur.execute("SELECT * FROM AddComment(%s::int, %s::int, %s::varchar(64), %s::varchar(1024));", (exec_id, usr_id, title, text))
