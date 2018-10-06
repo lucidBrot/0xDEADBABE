@@ -124,7 +124,7 @@ RETURNS int AS $$
         WHERE Exercise.Exercise_ID = exer_id;
       ELSE
         INSERT INTO Exercise (Assistant_ID, Lecture_ID)
-        VALUES (user_id, lecture_id)
+        VALUES (user_id, lect_id)
         RETURNING Exercise.Exercise_ID
         INTO exer_id;
       END IF;      
