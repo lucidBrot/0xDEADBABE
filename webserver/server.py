@@ -45,8 +45,8 @@ def helopost():
 def loadDebugCSV():
     out=""
     # read whole initialization file into one string
-    with open(config.SQL_INITIALIZATION_FILE, 'r') as content_file:
-        sqlFile = content_file.read()
+    #with open(config.SQL_INITIALIZATION_FILE, 'r') as content_file:
+     #   sqlFile = content_file.read()
     #try:
         #SqlWrapper.InitializeDatabase(sqlFile, 
          #       DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
