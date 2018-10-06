@@ -1,5 +1,15 @@
 -- #### TABLES ####
 
+DROP TABLE assists;
+DROP TABLE attends;
+DROP TABLE commentary;
+DROP TABLE rating;
+DROP TABLE teaches;
+DROP TABLE student;
+DROP TABLE assistant;
+DROP TABLE lecture;
+DROP TABLE "User";
+
 -- LECTURE
 CREATE TABLE Lecture (
 	Lecture_ID serial PRIMARY KEY,
