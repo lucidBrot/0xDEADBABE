@@ -51,32 +51,6 @@ def MakeOrGetExercise (title, dbname, user, password, host, port):
         conn.commit()
         cur.close()
         conn.close()
-        return id
-        
-"""
-Get user token
-"""       
-def GetUserToken (user_id, dbname, user, password, host, port):
-        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
-        cur = conn.cursor()     
-        cur.execute("SELECT * FROM GetUserToken(%s::int);", (user_id, )) 
-        uuid = cur.fetchone()[0]        
-        conn.commit()
-        cur.close()
-        conn.close()
-        return uuid
-        
-"""
-Get user by token
-"""       
-def GetUserByToken (token, dbname, user, password, host, port):
-        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
-        cur = conn.cursor()     
-        cur.execute("SELECT * FROM GetUserByToken(%s::uuid);", (token, )) 
-        id = cur.fetchone()[0]        
-        conn.commit()
-        cur.close()
-        conn.close()
         return id        
         
 def ClearExercises (dbname, user, password, host, port):
@@ -100,7 +74,18 @@ def AddExerciseRatings (ratings_list, user_nethz, dbname, user, password, host, 
         cur.close()
         conn.close()
 
-
+"""
+Adds a new comment from the given user to the given exercise with title and text.
+"""
+def AddComment (exercise_id, user_id, title, text, user_nethz, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM AddComment(%s::int, %s::int, %s::varchar(64), %s::varchar(1024));", (exec_id, usr_id, title, text))
+        id = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return id
         
 
 """
