@@ -67,7 +67,17 @@ comments -> comment.title
 
 <p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }}</p>
 
-<script>var EXERCISE_ID = {{ exercise_id }};</script>
+<script>
+<!-- Used for sending rating selection -->
+var EXERCISE_ID = {{ exercise_id }};
+
+function onRatingSelected(){
+	// send a list of tuples of (exercise_id, rating_title, rating_value)
+	// to '/submitRatings'
+	
+}
+
+</script>
 
 <div class="container-fluid">
     <div class="row">
