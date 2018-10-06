@@ -2,3 +2,4 @@
 webserver/__pycache__/SqlWrapper.cpython-36.pyc
 webserver/__pycache__/server.cpython-36.pyc
 webserver/__pycache__/config.cpython-36.pyc
+.vscode
