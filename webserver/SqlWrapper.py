@@ -48,6 +48,46 @@ def ClearExercises (dbname, user, password, host, port):
         cur.close()
         conn.close()
 
+"""
+Gets all active lectures as list of tuples
+(Lecture_ID, Lecture_Name)[]
+"""
+def GetActiveLectures (dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT GetActiveLectures();") 
+        lectures = cur.fetchmany()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return lectures
+      
+"""
+Gets all active exercises as list of tuples
+(Exercise_ID, Assistant_ID, Assistant_Nethz, Lecture_ID, Lecture_Name)[]
+"""      
+def GetActiveExercises (dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT GetActiveExercises();") 
+        exercises = cur.fetchmany()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return exercises
+        
+"""
+Gets a specific exercise
+(Exercise_ID, Assistant_ID, Assistant_Nethz, Lecture_ID, Lecture_Name)
+"""              
+def GetExercise (exercise_id, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT GetExercise(%s);", (exercise_id,)) 
+        id = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
 
 """
 Initialize Database
