@@ -120,6 +120,7 @@ def courses_template():
 def main_profile_template():
     TA_id = request.args.get('TA_id', default=0, type = int)
     course_id = request.args.get('course_id', default=0, type=int)
+    #TODO: actual facts
     # Debug constants
     TA_name = "Jasper Wurst"
     lecture = "Lecture Name of Systems"
@@ -131,11 +132,11 @@ def main_profile_template():
     comments = []
     return render_template('main_profile.html',TA_name=TA_name, lecture=lecture, attributes=attributes, comments=comments)
 
-@FLASK_SERVER.route('/courses', methods=["GET"])
-def courses():
+@FLASK_SERVER.route('/course.html', methods=["GET"])
+def course():
     course_ID = request.args.get('id', default = '0', type = int)
     TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
-
+    # TODO: when jasper made function to get list of TA_ids
     return render_template('course.html', course_ID = course_ID, TA=TA)
 
 
