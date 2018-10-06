@@ -104,27 +104,34 @@ nethzName
         </div>
 -->
 <script>
-<!-- Used for sending rating selection -->
-var EXERCISE_ID = {{ exercise_id }};
+    <!-- Used for sending rating selection -->
+    var EXERCISE_ID = {
+    {
+        exercise_id
+    }
+    }
+    ;
 
-function onRatingSelected(){
-	// send a list of tuples of (exercise_id, rating_title, rating_value)
-	// to '/submitRatings'
-    data = '['
-    $('div[class="testimonial"]').each(function(item,index){
-      data = data + '{"exercise_id" :'+ EXERCISE_ID +', "rating_title" : '+ currRatingTitle +', "rating_value" : '+ currRatingValue +' }';
+    function onRatingSelected() {
+        // send a list of tuples of (exercise_id, rating_title, rating_value)
+        // to '/submitRatings'
+        data = '['
+        $('div[aria-label="attribute-btn-group"]').each(function (index, element) {
+            currRatingTitle = $(element).attr('name');
+            $(element).for
+            data = data + '{"exercise_id" :' + EXERCISE_ID + ', "rating_title" : ' + currRatingTitle + ', "rating_value" : ' + currRatingValue + ' }';
 
-    });
-    data = data + '}]'
-    '[{"exercise_id" :'+ EXERCISE_ID +', "rating_title" : '+ currRatingTitle +', "rating_value" : '+ currRatingValue +' },{"name" : "Abhinandan", "age" : "20"}]';
-    fetch('/setCSV', {
-        method: 'POST',
-        body: jsonFile
-    }).then(function (response) {
-        //$(this).setAttribute()
-        return console.log(response.text());
-    })
-}
+        });
+        data = data + '}]'
+        '[{"exercise_id" :' + EXERCISE_ID + ', "rating_title" : ' + currRatingTitle + ', "rating_value" : ' + currRatingValue + ' },{"name" : "Abhinandan", "age" : "20"}]';
+        fetch('/setCSV', {
+            method: 'POST',
+            body: jsonFile
+        }).then(function (response) {
+            //$(this).setAttribute()
+            return console.log(response.text());
+        })
+    }
 </script>
 <p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }} </p>
 
@@ -140,26 +147,28 @@ function onRatingSelected(){
             <div class="card-rows">
                 <div class="card w-100">
                     <ul class="list-group  list-group-flush">
-                      {% for attribute in attributes %}
+                        {% for attribute in attributes %}
                         <li class="list-group-item">
                             <h5 class="text-center">{{ attribute["title"] }}</h5>
-                                <div class="btn-group btn-group-toggle btn-group-justified d-flex" data-toggle="buttons" role="group"
-                                     aria-label="Basic example">
-                                    <label class="btn btn-outline-secondary w-100">
-                                        <input type="radio" name="options" id="option9" autocomplete="off"> --
-                                    </label>
-                                    <label class="btn btn-outline-secondary w-100">
-                                        <input class="w-20" type="radio" name="options" id="option2" autocomplete="off"> -
-                                    </label>
-                                    <label class="btn btn-outline-secondary active w-100">
-                                        <input class="w-20" type="radio" name="options" id="option3" autocomplete="off" checked> ~
-                                    </label>
-                                    <label class="btn btn-outline-secondary w-100">
-                                        <input class="w-20" type="radio" name="options" id="option4" autocomplete="off"> +
-                                    </label>
-                                    <label class="btn btn-outline-secondary w-100">
-                                        <input class="w-20" type="radio" name="options" id="option5" autocomplete="off"> ++
-                                    </label>
+                            <div class="btn-group btn-group-toggle btn-group-justified d-flex" data-toggle="buttons"
+                                 role="group"
+                                 name="{{ attribute["title"] }}"
+                                 aria-label="attribute-btn-group">
+                                <label class="btn btn-outline-secondary w-100" name="option1" >
+                                    <input class="w-20" type="radio" autocomplete="off"> --
+                                </label>
+                                <label class="btn btn-outline-secondary w-100" name="option2">
+                                    <input class="w-20" type="radio" autocomplete="off"> -
+                                </label>
+                                <label class="btn btn-outline-secondary active w-100" name="option3">
+                                    <input class="w-20" type="radio" autocomplete="off" checked> ~
+                                </label>
+                                <label class="btn btn-outline-secondary w-100" name="option4">
+                                    <input class="w-20" type="radio" autocomplete="off"> +
+                                </label>
+                                <label class="btn btn-outline-secondary w-100" name="option5">
+                                    <input class="w-20" type="radio" autocomplete="off"> ++
+                                </label>
                             </div>
                             <div>
                                 <p class="float-left">strongly disagree</p>
