@@ -29,7 +29,7 @@ def main():
 @FLASK_SERVER.route('/', methods=["GET"])
 def heloworld():
     name = request.args.get('name', default = 'Josi', type = str)
-    return "Helo {}".format(name)
+    return "{} Helo {}".format(DEBUG_VERSION, name)
 
 # Sample to receive post request
 @FLASK_SERVER.route('/post', methods=["POST"])
