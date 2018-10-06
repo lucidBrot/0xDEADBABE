@@ -72,7 +72,7 @@ def setCSV():
     usr = request.form.get('nethz')
     auth = request.form.get('auth_token')
     # TODO: pass data on to database and make sure somewhere we verify that the user is admin
-    return "user: {0}\nauth: {2}\n{1}".format(str(usr), str(data), str(auth))
+    return "user: {0}\nauth_token: {2}\n{1}".format(str(usr), str(data), str(auth))
 
 # CSV Logic: --------------------------------------------------------------
 
