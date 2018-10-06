@@ -56,11 +56,13 @@ CREATE TABLE Attends (
 -- #### FUNCTIONS ####
 
 -- NOTIFY USER LOGIN
-CREATE OR REPLACE FUNCTION NotifyUserLogin (nethz varchar(32)) 
+CREATE OR REPLACE FUNCTION MakeOrGetUser (nethz varchar(32)) 
 RETURNS int AS $$
   DECLARE user_id int;
   BEGIN      
-      IF NOT EXISTS(SELECT * FROM "User" WHERE "User".Nethz_Name = nethz)
+      SELECT "User".User_ID FROM "User" WHERE "User".Nethz_Name = nethz INTO user_id;
+  
+      IF user_id is NULL
       THEN		  
           INSERT INTO "User" (Nethz_Name) 
           VALUES (nethz) 
@@ -72,38 +74,49 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql;
 
+-- NOTIFY USER LOGIN
+CREATE OR REPLACE FUNCTION MakeOrGetLecture (lecture_name varchar(128)) 
+RETURNS int AS $$
+  DECLARE lect_id int;
+  BEGIN  
+      SELECT Lecture.Lecture_ID FROM Lecture WHERE Lecture.Name = lecture_name INTO lect_id;
+  
+      IF lect_id is NULL
+      THEN		  
+          INSERT INTO Lecture (Name) 
+          VALUES (lecture_name) 
+          RETURNING Lecture.Lecture_ID
+          INTO lect_id;
+      END IF;
+      
+      RETURN lect_id;
+  END; 
+$$ LANGUAGE plpgsql;
+
 -- MAKE EXERCISE
 CREATE OR REPLACE FUNCTION MakeExercise (nethz varchar(32), lecture_name varchar(128)) 
-RETURNS void AS $$
+RETURNS int AS $$
+  DECLARE exer_id int;
   DECLARE user_id int;
   DECLARE lect_id int;
   BEGIN        
-	  SELECT "User".User_ID 
-      FROM "User" 
-      WHERE "User".Nethz_Name = nethz 
-      INTO user_id;
-      
-      IF user_id is NULL
-      THEN
-        user_id = NotifyUserLogin(nethz);
-      END IF;
-      
-      SELECT Lecture.Lecture_ID
-      FROM Lecture
-      WHERE Lecture.Name = lecture_name
-      INTO lect_id;
+	  user_id = MakeOrGetUser(nethz);
+      lect_id = MakeOrGetLecture(lecture_name);
+      SELECT Exercise.Exercise_ID FROM Exercise WHERE Exercise.Assistant_ID = user_id AND Exercise.Lecture_ID = lect_id INTO exer_id;
 	  
-      IF EXISTS (SELECT * FROM Exercise WHERE Exercise.Assistant_ID = user_id AND Exercise.Lecture_ID = lect_id)
+      IF exer_id IS NOT NULL
       THEN
         UPDATE Exercise 
         SET IsActive = True 
         WHERE Exercise.Assistant_ID = user_id AND Exercise.Lecture_ID = lect_id;
       ELSE
         INSERT INTO Exercise (Assistant_ID, Lecture_ID)
-        VALUES (user_id, lecture_id);
+        VALUES (user_id, lecture_id)
+        RETURNING Exercise.Exercise_ID
+        INTO exer_id;
       END IF;      
 	  
-      RETURN;
+      RETURN exer_id;
   END; 
 $$ LANGUAGE plpgsql;
 																	 

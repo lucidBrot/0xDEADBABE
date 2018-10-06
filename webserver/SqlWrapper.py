@@ -1,23 +1,54 @@
 import psycopg2
 
-def NotifyUserLogin (username):
+"""
+nethz is limited to 32 characters
+"""
+def MakeOrGetUser (nethz):
         conn = psycopg2.connect("dbname=test user=postgres")
         cur = conn.cursor()     
-        cur.execute("DO $$ BEGIN PERFORM NotifyUserLogin(%s); END; $$;", (username))    
+        cur.execute("DO $$ BEGIN PERFORM MakeOrGetUser(%s); END; $$;", (nethz,))    
+        id = cur.fetchone()[0]
         conn.commit()
         cur.close()
         conn.close()
+        return id
         
 """
-assistant_nethz is limited to 32 characters
+lecture_name is limited to 128 characters
 """
-def MakeAssistant (assistant_nethz, dbname, user, password, host, port):
+def MakeOrGetLecture (lecture_name, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("DO $$ BEGIN PERFORM MakeAssistant(%s::varchar(32)); END; $$;", (assistant_nethz,))       
+        cur.execute("DO $$ BEGIN PERFORM MakeOrGetLecture(%s::varchar(128)); END; $$;", (lecture_name,)) 
+        id = cur.fetchone()[0]        
         conn.commit()
         cur.close()
         conn.close()
+        return id
+       
+"""
+nethz is limited to 32 characters
+lecture_name is limited to 128 characters
+"""       
+def MakeExercise (nethz, lecture_name, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("DO $$ BEGIN PERFORM MakeExercise(%s::varchar(32), %s::varchar(128)); END; $$;", (nethz, lecture_name)) 
+        id = cur.fetchone()[0]        
+        conn.commit()
+        cur.close()
+        conn.close()
+        return id
+        
+def ClearExercises (dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("DO $$ BEGIN PERFORM ClearExercises(); END; $$;") 
+        id = cur.fetchone()[0]        
+        conn.commit()
+        cur.close()
+        conn.close()
+        return id
 
 
 """
