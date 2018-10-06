@@ -7,7 +7,7 @@ import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
 from io import StringIO
 from flask import render_template
-from flask import session
+from flask import session, redirect
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -106,7 +106,7 @@ def userLogin():
     except Exception as e:
         retStr += "failed: {} <br/>".format(str(e))
 #    return retStr
-    return redirect("/course.html", code=302)
+    return redirect("/courses.html", code=302)
 
 @FLASK_SERVER.route('/submitVotes', methods=["POST"]) #TODO: submit Votes from GUI
 def submitVotes():
