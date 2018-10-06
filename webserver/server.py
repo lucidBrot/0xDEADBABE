@@ -18,7 +18,7 @@ DB_NAME = os.environ.get("RUNTIME_POSTGRES_DB_NAME")
 DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
-DEBUG_VERSION = "n"
+DEBUG_VERSION = "o"
 
 def main():
     FLASK_SERVER.run('0.0.0.0', port=80)
@@ -42,7 +42,7 @@ def helopost():
 #    return send_from_directory(STATIC_DIR, 'messages_typora.html')
 
 """
-only
+only debug
 """
 @FLASK_SERVER.route('/loadDebugCSV')
 def loadDebugCSV():
@@ -80,6 +80,23 @@ def setCSV():
     usr = request.form.get('nethz') # the user who sent the request
     debug_log = dbInitializeTeachingAssistants(csvdict)
     return "user: {0}\n{1}\n\n{2}".format(str(usr), str(csvdict), debug_log)
+
+"""
+Tell database to create user if doesn't exist
+nethz: which user logged in
+"""
+@FLASK_SERVER.route('/userLogin', methods=["POST"])
+def userLogin():
+    nethz = request.form.get('nethz')
+    retStr = "{} logged in. Tellling DB...<br/>".format(nethz)
+    try:
+        SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        retStr += "done.<br/>"
+    except Exception as e:
+        retStr += "failed: {} <br/>".format(str(e))
+    return retStr
+
+
 
 # CSV Logic: --------------------------------------------------------------
 

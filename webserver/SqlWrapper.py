@@ -3,8 +3,8 @@ import psycopg2
 """
 nethz is limited to 32 characters
 """
-def MakeOrGetUser (nethz):
-        conn = psycopg2.connect("dbname=test user=postgres")
+def MakeOrGetUser (nethz, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
         cur.execute("DO $$ BEGIN PERFORM MakeOrGetUser(%s); END; $$;", (nethz,))    
         id = cur.fetchone()[0]
