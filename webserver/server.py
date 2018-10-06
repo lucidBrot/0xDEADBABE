@@ -99,7 +99,7 @@ nethz: which user logged in
 def userLogin():
     nethz = request.form.get('nethz')
     redirect = '<script>window.location.replace("/courses.html");</script>'
-    retStr = "{}{} logged in. Tellling DB...<br/>".format(redirect,nethz)
+    retStr = "{}{} logged in... Tellling DB...<br/>".format(redirect,nethz)
     try:
         SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         session["nethz_cookie"] = nethz
