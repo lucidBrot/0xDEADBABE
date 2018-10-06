@@ -2,7 +2,6 @@
 import os
 from flask import Flask
 from flask import request, send_from_directory, url_for
-from sqlalchemy.sql import func
 import csv
 import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
@@ -41,9 +40,6 @@ def helopost():
 # def sample_route():
 #    return send_from_directory(STATIC_DIR, 'messages_typora.html')
 
-# Sample to call Stored Procedures
-# def callStoredProcedure():
-#    data = DB.session.query(func.SCHEMA.FUNC_NAME()).all()
 
 @FLASK_SERVER.route('/loadDebugCSV')
 def loadDebugCSV():
