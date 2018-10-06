@@ -1,132 +1,117 @@
 -- #### TABLES ####
 
-DROP TABLE assists;
-DROP TABLE attends;
-DROP TABLE commentary;
-DROP TABLE rating;
-DROP TABLE teaches;
-DROP TABLE student;
-DROP TABLE assistant;
-DROP TABLE lecture;
-DROP TABLE "User";
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
 
 -- LECTURE
 CREATE TABLE Lecture (
 	Lecture_ID serial PRIMARY KEY,
-	Name varchar(128)
+	Name varchar(128) NOT NULL
 );
+CREATE UNIQUE INDEX UIX_LectureName ON Lecture (Name);
 
 -- USER
 CREATE TABLE "User" (
 	User_ID serial PRIMARY KEY,
-	Username varchar(32) NOT NULL	
+	Nethz_Name varchar(32) NOT NULL	
 );
-CREATE UNIQUE INDEX UIX_User ON "User" (Username);
-
--- Assistant
-CREATE TABLE Assistant (
-	Assistant_ID int PRIMARY KEY REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
-	IsActive boolean NOT NULL DEFAULT(true),
-	PictureData bytea
-);
-
--- STUDENT
-CREATE TABLE Student (
-	Student_ID int PRIMARY KEY REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE
-);
+CREATE UNIQUE INDEX UIX_User ON "User" (Nethz_Name);
 
 -- TEACHES
-CREATE TABLE Teaches (
-	Assistant_ID int REFERENCES Assistant ON DELETE CASCADE ON UPDATE CASCADE,
+CREATE TABLE Exercise (
+	Exercise_ID int PRIMARY KEY,
+	Assistant_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY (Assistant_ID, Lecture_ID)
+    IsActive boolean NOT NULL DEFAULT True
 );
 
 -- COMMENTARY
 CREATE TABLE Commentary (
-	Student_ID int REFERENCES Student ON DELETE CASCADE ON UPDATE CASCADE,
-	Assistant_ID int REFERENCES Assistant ON DELETE CASCADE ON UPDATE CASCADE,
-	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE ON UPDATE CASCADE,
+	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
+	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
 	Title varchar(64) NOT NULL,
 	Text varchar(1024) NOT NULL,
-	PRIMARY KEY (Assistant_ID, Lecture_ID)
+	PRIMARY KEY (User_ID, Exercise_ID)
 );
 
 -- RATING
 CREATE TABLE Rating (
-	Student_ID int REFERENCES Student ON DELETE CASCADE ON UPDATE CASCADE,
-	Assistant_ID int REFERENCES Assistant ON DELETE CASCADE ON UPDATE CASCADE,
-	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE ON UPDATE CASCADE,
+	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
+	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
 	Field int NOT NULL,
 	RatingValue int NOT NULL,
-	PRIMARY KEY (Student_ID, Assistant_ID, Lecture_ID)
+	PRIMARY KEY (User_ID, Exercise_ID)
 );
 
 -- ATTENDS
 CREATE TABLE Attends (
-	Student_ID int REFERENCES Student ON DELETE CASCADE ON UPDATE CASCADE,
-	Lecture_ID int REFERENCES Lecture ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY (Student_ID, Lecture_ID)
-);
-
--- ASSISTS
-CREATE TABLE Assists (
-	Student_ID int REFERENCES Student ON DELETE CASCADE ON UPDATE CASCADE,
-	Assistant_ID int REFERENCES Assistant ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY (Student_ID, Assistant_ID)
+	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
+	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (User_ID, Exercise_ID)
 );
 
 -- #### FUNCTIONS ####
 
 -- NOTIFY USER LOGIN
-CREATE OR REPLACE FUNCTION NotifyUserLogin (usrname varchar(32)) 
-RETURNS void AS $$
-  DECLARE user_id int;
-  BEGIN      
-      IF NOT EXISTS(SELECT * FROM "User" WHERE "User".Username = usrname)
-      THEN		  
-          INSERT INTO "User" (Username) VALUES (usrname) RETURNING "User".User_ID INTO user_id;
-          INSERT INTO Student (Student_ID) VALUES (user_id);
-      END IF;
-      RETURN;
-  END; 
-$$ LANGUAGE plpgsql;
-
--- MAKE ASSISTANT
-CREATE OR REPLACE FUNCTION MakeAssistant (usrname varchar(32)) 
-RETURNS void AS $$
-  DECLARE user_id int;
-  BEGIN      
-	  SELECT "User".user_id FROM "User" WHERE Username = usrname INTO user_id;
-	  
-      IF user_id is NULL
-      THEN		  
-		INSERT INTO "User" (Username) VALUES (usrname) RETURNING "User".user_id INTO user_id;
-      END IF;
-	  
-	  IF EXISTS(SELECT * FROM Assistant WHERE Assistant_ID = user_id)
-	  THEN
-		RAISE EXCEPTION 'Already an assistant.';
-	  END IF;
-	  
-	  INSERT INTO Assistant (Assistant_ID) VALUES (user_id);
-	  
-      RETURN;
-  END; 
-$$ LANGUAGE plpgsql;
-
--- ADD LECTURE IF UNKNOWN
-CREATE OR REPLACE FUNCTION AddLectureIfUnknown (new_name varchar(128)) 
+CREATE OR REPLACE FUNCTION NotifyUserLogin (nethz varchar(32)) 
 RETURNS int AS $$
-  DECLARE lecture_id int;
+  DECLARE user_id int;
   BEGIN      
-	  SELECT Lecture.Lecture_ID FROM Lecture WHERE Lecture.Name = new_name INTO lecture_id;
-	  
-      IF lecture_id is NULL
+      IF NOT EXISTS(SELECT * FROM "User" WHERE "User".Nethz_Name = nethz)
       THEN		  
-		INSERT INTO Lecture (Name) VALUES (new_name) RETURNING Lecture.Lecture_ID INTO lecture_id;		
+          INSERT INTO "User" (Nethz_Name) 
+          VALUES (nethz) 
+          RETURNING "User".User_ID 
+          INTO user_id;
       END IF;
-	  
-      RETURN lecture_id;
+      
+      RETURN user_id;
   END; 
 $$ LANGUAGE plpgsql;
+
+-- MAKE EXERCISE
+CREATE OR REPLACE FUNCTION MakeExercise (nethz varchar(32), lecture_name varchar(128)) 
+RETURNS void AS $$
+  DECLARE user_id int;
+  DECLARE lect_id int;
+  BEGIN        
+	  SELECT "User".User_ID 
+      FROM "User" 
+      WHERE "User".Nethz_Name = nethz 
+      INTO user_id;
+      
+      IF user_id is NULL
+      THEN
+        user_id = NotifyUserLogin(nethz);
+      END IF;
+      
+      SELECT Lecture.Lecture_ID
+      FROM Lecture
+      WHERE Lecture.Name = lecture_name
+      INTO lect_id;
+	  
+      IF EXISTS (SELECT * FROM Exercise WHERE Exercise.Assistant_ID = user_id AND Exercise.Lecture_ID = lect_id)
+      THEN
+        UPDATE Exercise 
+        SET IsActive = True 
+        WHERE Exercise.Assistant_ID = user_id AND Exercise.Lecture_ID = lect_id;
+      ELSE
+        INSERT INTO Exercise (Assistant_ID, Lecture_ID)
+        VALUES (user_id, lecture_id);
+      END IF;      
+	  
+      RETURN;
+  END; 
+$$ LANGUAGE plpgsql;
+																	 
+-- CLEAR EXERCISES
+CREATE OR REPLACE FUNCTION ClearExercises () 
+RETURNS void AS $$
+  BEGIN        
+	  UPDATE Exercise SET IsActive = False;	  
+      RETURN;
+  END; 
+$$ LANGUAGE plpgsql;                                                                
