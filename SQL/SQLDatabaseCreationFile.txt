@@ -40,25 +40,28 @@ CREATE TABLE Commentary (
 
 -- RATING
 CREATE TABLE Rating (
+    Rating_ID int PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
 	Field int NOT NULL,
 	RatingValue int NOT NULL,
-	PRIMARY KEY (User_ID, Exercise_ID)
+	UNIQUE (User_ID, Exercise_ID)
 );
 
 -- RATING
 CREATE TABLE CommentaryLike (
+    CommentaryLike int PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Commentary_ID int REFERENCES Commentary ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY (User_ID, Commentary_ID)
+	UNIQUE (User_ID, Commentary_ID)
 );
 
 -- ATTENDS
-CREATE TABLE Attends (
+CREATE TABLE Attendee (
+    Attendee_ID int PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY (User_ID, Exercise_ID)
+	UNIQUE (User_ID, Exercise_ID)
 );
 
 -- #### FUNCTIONS ####
