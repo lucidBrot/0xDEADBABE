@@ -1,13 +1,16 @@
 -- #### TABLES ####
 
-DROP TABLE IF EXISTS CommentaryLike;
-DROP TABLE IF EXISTS Commentary;
-DROP TABLE IF EXISTS Rating;
-DROP TABLE IF EXISTS RatingField;
-DROP TABLE IF EXISTS Attendee;
-DROP TABLE IF EXISTS Exercise;
-DROP TABLE IF EXISTS Lecture;
-DROP TABLE IF EXISTS "User";
+DROP TABLE IF EXISTS CommentaryLike CASCADE;
+DROP TABLE IF EXISTS Commentary CASCADE;
+DROP TABLE IF EXISTS Rating CASCADE;
+DROP TABLE IF EXISTS RatingField CASCADE;
+DROP TABLE IF EXISTS Attendee CASCADE;
+DROP TABLE IF EXISTS Teaches CASCADE;
+DROP TABLE IF EXISTS Student CASCADE;
+DROP TABLE IF EXISTS Assistent CASCADE;
+DROP TABLE IF EXISTS Exercise CASCADE;
+DROP TABLE IF EXISTS Lecture CASCADE;
+DROP TABLE IF EXISTS "User" CASCADE;
 
 -- LECTURE
 CREATE TABLE Lecture (
@@ -184,9 +187,11 @@ RETURNS TABLE (
       WHERE Exercise.IsActive = True;    
   END; 
 $$ LANGUAGE plpgsql; 
-                                                             
+                    
+DROP FUNCTION IF EXISTS GetExercise;
+                    
 -- GET EXERCISE
-CREATE OR REPLACE FUNCTION GetExercise (exer_id int) 
+CREATE OR REPLACE FUNCTION GetExercise (lect_id int, assi_id int) 
 RETURNS TABLE (
     Exercise_ID int,
     Assistant_ID int,
@@ -200,12 +205,14 @@ RETURNS TABLE (
       FROM Exercise
       JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
       JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
-      WHERE Exercise.Exercise_ID = exer_id;    
+      WHERE Lecture.Lecture_ID = lect_id AND Exercise.Assistant_ID = assi_id;    
   END; 
 $$ LANGUAGE plpgsql; 
 
+DROP FUNCTION IF EXISTS GetExerciseRatings;
+
 -- GET EXERCISE RATINGS
-CREATE OR REPLACE FUNCTION GetExerciseRatings () 
+CREATE OR REPLACE FUNCTION GetExerciseRatings (exer_id int) 
 RETURNS TABLE (
     Exercise_ID int,
     Rating_Title varchar(128),
@@ -221,3 +228,25 @@ RETURNS TABLE (
       GROUP BY RatingField.RatingField_ID;
   END; 
 $$ LANGUAGE plpgsql; 
+
+DROP FUNCTION IF EXISTS GetLectureExercise;
+
+-- GET LECTURE ASSISTANTS
+CREATE OR REPLACE FUNCTION GetLectureExercises (lect_id int) 
+RETURNS TABLE (
+    Exercise_ID int,
+    Assistant_ID int,
+    Assistant_Nethz varchar(32),
+    Lecture_ID int,
+    Lecture_Name varchar(128)
+  )
+  AS $$
+  BEGIN        
+	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Name, Lecture.Lecture_ID, Lecture.Name 
+      FROM Exercise
+      JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
+      JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
+      WHERE Exercise.IsActive = True AND Lecture.Lecture_ID = lect_id; 
+  END; 
+$$ LANGUAGE plpgsql; 
+
