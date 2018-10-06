@@ -24,6 +24,8 @@
             }
         }
 
+        var data = new FormData()
+
         function startWebsite() {
             /*
             document.getElementById('customFile').addEventListener('change', handleFileSelect, false);
@@ -80,20 +82,19 @@
                         '</li>');
                 }
                 var input = document.querySelector('input[type="file"]')
-                var data = new FormData()
+                data = new FormData()
                 data.append('file', input.files[0])
                 //data.append('auth_token', document.getElementById('auth').value)
                 data.append('nethz', "admin")
-
+            });
+            $("#upload-button").click(function(){
                 fetch('/setCSV', {
                     method: 'POST',
                     body: data
                 }).then(function (response) {
                     return console.log(response.text());
                 })
-
-
-            });
+            })
         }
     </script>
 </head>
@@ -136,7 +137,7 @@
                 <input type="file" class="custom-file-input" id="customFile">
                 <label class="custom-file-label" for="customFile" text="hi">Choose file</label>
             </div>
-            <a href="#" class="btn btn-primary float-right" style="margin-top:10px">Upload</a>
+            <a href="#" class="btn btn-primary float-right" style="margin-top:10px" id="upload-button">Upload</a>
         </div>
     </div>
 </div>
