@@ -40,7 +40,9 @@ def helopost():
 # def sample_route():
 #    return send_from_directory(STATIC_DIR, 'messages_typora.html')
 
-
+"""
+only
+"""
 @FLASK_SERVER.route('/loadDebugCSV')
 def loadDebugCSV():
     out=""
@@ -91,13 +93,13 @@ def parseDebugCSV():
 
 def dbInitializeTeachingAssistants(csvData):
     returnString = ""
-    # TODO: do for all data
-    try:
-        returnString += "{0},{1},{2},{3},{4},{5} <br/>".format(csvData[0][config.CSV_TA_NETHZ], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        SqlWrapper.MakeAssistant(csvData[0][config.CSV_TA_NETHZ],
-            DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-    except Exception as e:
-        returnString+=str(e)
+    for i in range(len(csvData)):
+        try:
+            returnString += "{0},{1},{2},{3},{4},{5} <br/>".format(csvData[i][config.CSV_TA_NETHZ], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+            SqlWrapper.MakeAssistant(csvData[i][config.CSV_TA_NETHZ],
+                DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        except Exception as e:
+            returnString+=str(e)+" <br/>"
     return returnString
 
 
