@@ -1,3 +1,8 @@
+<!--
+    This template need from flask:
+    courses[]: A list of all course names
+-->
+
 <!DOCTYPE html>
 <html>
 
@@ -50,140 +55,15 @@
         </form>
     </div>
 </nav>
-<!--
-<div id="course-card-deck" class="card-deck">"
-    <div class="card flex-row flex-wrap">
-        <div class="card-header border-0">
-            <img src="https://static.vis.ethz.ch/favicon/viscon/apple-touch-icon.png" alt="">
-        </div>
-        <div class="card-block px-2">
-            <h4 class="card-title">Title</h4>
-            <p class="card-text">Description</p>
-            <a href="#" class="btn btn-primary">BUTTON</a>
-        </div>
-        <div class="w-100"></div>
-    </div>
-</div>
-
-<div class="card w-75">
-    <div class="card-body">
-        <h5 class="card-title">Course Name</h5>
-        <p class="card-text">additional information</p>
-    </div>
-</div>
-        <div class="card w-75">
-            <div class="row no-gutters">
-                <div class="col-auto">
-                    <img src="https://static.vis.ethz.ch/favicon/viscon/apple-touch-icon.png" alt="" class="rounded">
-                </div>
-                <div class="col">
-                    <div class="card-block px-2">
-                        <h4 class="card-title">Title</h4>
-                        <p class="card-text">Description</p>
-                        <a href="#" class="btn btn-primary">BUTTON</a>
-                    </div>
-                </div>
-            </div>
-        </div>
--->
-<p class="h1" style="padding: 20px"> Jasper Wurst </p>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm">
-            <h2>
-                Attributes
-                <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Add/Edit Feedback</a>
-            </h2>
-            <div class="card-rows">
-                <div class="card w-100">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            Speaks fluently
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
-                                     aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            Shows Examples
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25"
-                                     aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            Revises Lecture Content
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                     aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-
-                        </li>
-                        <li class="list-group-item">
-                            REEEE
-
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100"
-                                     aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
-        <div class="col-sm">
-            <h2>
-                Comments
-                <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Add/Edit Comment</a>
-            </h2>
-            <div class="card-rows">
-                <div class="card" style="margin: 10px">
-                    <div class="card-body">
-                        <h5 class="card-title">Cooler Typ</h5>
-                        <p class="card-text">Hat mich mit einem Kabelbinder gehauen. Cooler Typ!</p>
-                        <footer class="blockquote-footer">knielinc</footer>
-                    </div>
-                    <div class="container-fluid">
-                        <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Like
-                            <span class="badge badge-light ">42</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="card" style="margin: 10px">
-                    <div class="card-body">
-                        <h5 class="card-title">Cooler Typ</h5>
-                        <p class="card-text">Hat mich mit einem Kabelbinder gehauen. Cooler Typ!</p>
-                        <footer class="blockquote-footer">knielinc</footer>
-                    </div>
-                    <div class="container-fluid">
-                        <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Like
-                            <span class="badge badge-light ">42</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="card" style="margin: 10px">
-                    <div class="card-body">
-                        <h5 class="card-title">Cooler Typ</h5>
-                        <p class="card-text">Hat mich mit einem Kabelbinder gehauen. Cooler Typ!</p>
-                        <footer class="blockquote-footer">knielinc</footer>
-                    </div>
-                    <div class="container-fluid">
-                        <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Like
-                            <span class="badge badge-light ">42</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
 
 
+<ul class="list-group">
+    {% for course_name in courses %}
+        <li class="list-group-item">
+            {{ course_name }}
+        </li>
+    {% endfor %}
+</ul>
 </body>
 
 </html>
