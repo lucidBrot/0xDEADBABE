@@ -208,7 +208,7 @@ RETURNS TABLE (
 $$ LANGUAGE plpgsql; 
 
 -- GET EXERCISE RATINGS
-CREATE OR REPLACE FUNCTION GetExerciseRatings () 
+CREATE OR REPLACE FUNCTION GetExerciseRatings (exer_id int) 
 RETURNS TABLE (
     Exercise_ID int,
     Rating_Title varchar(128),
@@ -222,6 +222,25 @@ RETURNS TABLE (
       JOIN RatingField ON Rating.RatingField_ID = RatingField.RatingField_ID
       WHERE Exercise.Exercise_ID = exer_id AND RatingField.IsActive = TRUE
       GROUP BY RatingField.RatingField_ID;
+  END; 
+$$ LANGUAGE plpgsql; 
+
+-- GET LECTURE ASSISTANTS
+CREATE OR REPLACE FUNCTION GetLectureExercises (lecture_id int) 
+RETURNS TABLE (
+    Exercise_ID int,
+    Assistant_ID int,
+    Assistant_Nethz varchar(32),
+    Lecture_ID int,
+    Lecture_Name varchar(128)
+  )
+  AS $$
+  BEGIN        
+	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Name, Lecture.Lecture_ID, Lecture.Name 
+      FROM Exercise
+      JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
+      JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
+      WHERE Exercise.IsActive = True AND Lecture.Lecture_ID = lecture_id; 
   END; 
 $$ LANGUAGE plpgsql; 
 
