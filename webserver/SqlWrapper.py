@@ -80,16 +80,30 @@ def GetActiveExercises (dbname, user, password, host, port):
 Gets a specific exercise
 (Exercise_ID, Assistant_ID, Assistant_Nethz, Lecture_ID, Lecture_Name)
 """              
-def GetExercise (exercise_id, dbname, user, password, host, port):
+def GetExercise (lecture_id, assistant_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("SELECT GetExercise(%s);", (exercise_id,)) 
+        cur.execute("SELECT GetExercise(%s, %s);", (lecture_id, assistant_id)) 
         exercise = cur.fetchone()
         conn.commit()
         cur.close()
         conn.close()
         return exercise
         
+"""
+Gets all active exercises as list of tuples
+(Exercise_ID, Assistant_ID, Assistant_Nethz, Lecture_ID, Lecture_Name)[]
+"""      
+def GetLectureExercises (lecture_id, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT GetLectureExercises(%s);", (lecture_id,)) 
+        exercises = cur.fetchmany()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return exercises
+                
 """
 Gets the ratings for a specific exercise
 (Exercise_ID, Rating_Title, Rating_Value)
