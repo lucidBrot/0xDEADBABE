@@ -93,7 +93,8 @@ def setCSV():
     csvdict = [{k: v for k, v in zip(keys, value)} for value in values]
     usr = request.form.get('nethz') # the user who sent the request
     debug_log = dbInitializeTeachingAssistants(csvdict)
-    return "user: {0}\n{1}\n\n{2}".format(str(usr), str(csvdict), debug_log)
+#    return "user: {0}\n{1}\n\n{2}".format(str(usr), str(csvdict), debug_log)
+    return redirect("/courses.html", code=302)
 
 """
 Tell database to create user if doesn't exist
