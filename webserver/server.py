@@ -111,7 +111,8 @@ def userLogin():
 
 @FLASK_SERVER.route('/submitRatings', methods=["POST"]) #TODO: submit Votes from GUI
 def submitVotes():
-    ratingsList = request.form.get('ratings')
+    ratingsListJSON = request.form.get('ratings')
+    ratingsList = json.loads(ratingsListJSON)
     user_nethz = session["nethz_cookie"]
     retStr = "Got ratings: {}".format(str(ratingsList))
     try:
