@@ -23,7 +23,7 @@ FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}
 FLASK_SERVER.config['PEOPLE_API_URL'] = os.environ.get("RUNTIME_SERVIS_PEOPLE_API_SERVER")
 FLASK_SERVER.config['PEOPLE_API_PORT'] = os.environ.get("RUNTIME_SERVIS_PEOPLE_API_PORT")
 FLASK_SERVER.config['PEOPLE_API_KEY'] = os.environ.get("RUNTIME_SERVIS_PEOPLE_API_KEY")
-DEBUG_VERSION = "abab"
+DEBUG_VERSION = "ababc"
 
 def main():
     initDatabase()
