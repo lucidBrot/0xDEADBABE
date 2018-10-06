@@ -2,7 +2,7 @@
     This template need from flask:
     course_id: Integer of the id
     course_name: A string
-    TA_data[{}]: A list of dictionaries of TA name, id & nethz
+    TA_data[{}]: A list of dictionaries of TA id & nethz
 -->
 
 <!DOCTYPE html>
@@ -68,7 +68,7 @@
         {% for TA in TA_data %}
             <a href="main_profile?TA_id={{ TA['id'] }}&course_id={{ course_id }}">
                 <li class="list-group-item">
-                    {{ TA['name'] }}
+                    {{ TA['nethz'] }}
                 </li>
             </a>
         {% endfor %}
