@@ -98,14 +98,15 @@ nethz: which user logged in
 @FLASK_SERVER.route('/userLogin', methods=["POST"])
 def userLogin():
     nethz = request.form.get('nethz')
-    retStr = "{} logged in. Tellling DB...<br/>".format(nethz)
+    redirect = '<meta http-equiv="refresh" content="0"; url="/courses.html" />'
+    retStr = "{}{} logged in. Tellling DB...<br/>".format(redirect,nethz)
     try:
         SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         session["nethz_cookie"] = nethz
         retStr += "done.<br/>"
     except Exception as e:
         retStr += "failed: {} <br/>".format(str(e))
-    return retStr # TODO: anwer with cookie
+    return retStr
 
 @FLASK_SERVER.route('/submitVotes', methods=["POST"]) #TODO: submit Votes from GUI
 def submitVotes():
