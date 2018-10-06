@@ -108,14 +108,18 @@ def userLogin():
 
 @FLASK_SERVER.route('/courses.html')
 def courses_template():
-    courses = [
-            (1337, "Physically Based Stimulation"),
-            (1234, "Distributed Süstems")
-            ]
-    return render_template('courses.html', courses=courses)
+    try:
+        lectures = SqlWrapper.GetActiveLectures(DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+    except Exception as e:
+        return "Internal Server Error. Request failed :( Please try again.<br/>{}".format(str(e))
 
-@FLASK_SERVER.route('/main_profile.html')
+    return render_template('courses.html', courses=lectures)
+
+# TA_id, course_id
+@FLASK_SERVER.route('/main_profile.html', methods=["GET"])
 def main_profile_template():
+    TA_id = request.args.get('TA_id', default=0, type = int)
+    course_id = request.args.get('course_id', default=0, type=int)
     # Debug constants
     TA_name = "Jasper Wurst"
     lecture = "Lecture Name of Systems"
@@ -132,7 +136,7 @@ def courses():
     course_ID = request.args.get('id', default = '0', type = int)
     TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
 
-    return render_template('course.html',
+    return render_template('course.html', course_ID = course_ID, TA=TA)
 
 
 # CSV Logic: --------------------------------------------------------------
