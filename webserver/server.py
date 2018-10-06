@@ -152,10 +152,40 @@ def main_profile_template():
             # percentage = 10*points
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
-        comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_id, attributes=attributes, comments=comments, exercise_id=ex_id)
+    
+        # load comments from database
+        commentsList = SqlWrapper.GetExerciseComments(ex_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        comments=[]
+        for comment in commentsList:
+            (_, user_id, user_nethz, creation_date, like_count_c, title_c, text_c) = comment
+            comments.append({
+                "title": title_c, "text": text_C, "like_count":like_count_c, "author":user_nethz
+                })
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_id, attributes=attributes, comments=comments, exercise_id=ex_id, nethz=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
+
+# exactly same thing again, but without comments
+@FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
+def main_profile_template():
+    TA_id = request.args.get('TA_id', default=0, type = int)
+    course_id = request.args.get('course_id', default=0, type=int)
+    # get Facts from database
+    try:
+        (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        attributes = []
+        ex_id = None
+        for rating in ratings:
+            (ex_id, title, value) = rating
+            # percentage = 10*points
+            percentage = 10*value
+            attributes.append({"title" : title, "percentage" : percentage})
+        comments = []
+        return render_template('main_profile_edit.html',TA_name=assi_nethz, lecture=lec_id, attributes=attributes, comments=comments, exercise_id=ex_id)
+    except Exception as e:
+        return "Exception! {}".format(str(e))
+
 
 @FLASK_SERVER.route('/course.html', methods=["GET"])
 def course():
