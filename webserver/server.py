@@ -23,6 +23,7 @@ DEBUG_VERSION = "aba"
 
 def main():
     initDatabase()
+    fillDatabase()
     FLASK_SERVER.run('0.0.0.0', port=80)
 
 def initDatabase():
@@ -149,6 +150,12 @@ def course():
 
 
 # CSV Logic: --------------------------------------------------------------
+
+def fillDatabase():
+    data = parseDebugCSV()
+    log = dbInitializeTeachingAssistants(data)
+    print(log)
+
 
 """
 return: a list of OrderedDictionaries with the keys config.CSV_TA_NETHZ and CSV_TA_NETHZ
