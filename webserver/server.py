@@ -20,7 +20,7 @@ DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
 DB = SQLAlchemy(FLASK_SERVER)
-DEBUG_VERSION = "a"
+DEBUG_VERSION = "c"
 
 def main():
     FLASK_SERVER.run('0.0.0.0', port=80)
@@ -52,10 +52,10 @@ def loadDebugCSV():
     # parse CSV
     csvData = parseDebugCSV()
     # tell database about csv content
-    problem = dbInitializeTeachingAssistants(csvData)
+    out = dbInitializeTeachingAssistants(csvData)
     # add version
     version = DEBUG_VERSION
-    return "{}<br/><br/>csvData: {}\<br/><br/>Problem:{}".format(version, str(csvData), str(problem))
+    return "{}<br/><br/>csvData: {}\<br/><br/>Out:{}".format(version, str(csvData), str(out))
 
 # CSV Logic: --------------------------------------------------------------
 
@@ -74,12 +74,14 @@ def parseDebugCSV():
     return parseCSV('./debug_inputs/inputs.csv')
 
 def dbInitializeTeachingAssistants(csvData):
+    returnString = ""
     # TODO: do for all data
     try:
+        returnString += "{0},{1},{2},{3},{4},{5}".format(csvData[0][config.CSV_TA_NETHZ], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         SqlWrapper.MakeAssistant(csvData[0][config.CSV_TA_NETHZ],
             DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        return ""
-    except Exception as e: return str(e)
+    except Exception as e: returnString+=str(e)
+    return returnString
 
 
 if __name__ == '__main__':
