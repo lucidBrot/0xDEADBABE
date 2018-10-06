@@ -110,7 +110,7 @@ def userLogin():
     return redirect("/courses.html", code=302)
 
 @FLASK_SERVER.route('/submitRatings', methods=["POST"])
-def submitVotes():
+def submitRatings():
     ratingsDictListJSON = request.form.get('ratings')
     # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
     ratingsDictList = json.loads(ratingsDictListJSON)
@@ -124,6 +124,18 @@ def submitVotes():
     except Exception as e:
         retStr += "<br/>...failed: {} <br/>".format(str(e))
     return retStr
+
+@FLASK_SERVER.route('/submitComment', methods=["POST"])
+def submitComment():
+    msg = request.form.get('message')
+    nethz_name = session["nethz_cookie"]
+    msg_title = request.form.get('message_title')
+    ex_id = request.form.get('exercise_id')
+    try:
+        user_id = SqlWrapper.MakeOrGetUser (nethz_name, DB_NAME, DB_USER, DB_PASS, DB_URL, DB_PORT)
+        SqlWrapper.AddComment(ex_id, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PASS, DB_PORT)
+    except Exception as e:
+        return "Exception: {}".format(str(e))
 
 # Dynamic Templates: ------------------------------------------------------
 
@@ -167,7 +179,7 @@ def main_profile_template():
 
 # exactly same thing again, but without comments
 @FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
-def main_profile_template():
+def main_profile_edit_template():
     TA_id = request.args.get('TA_id', default=0, type = int)
     course_id = request.args.get('course_id', default=0, type=int)
     # get Facts from database
