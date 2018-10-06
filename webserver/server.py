@@ -17,7 +17,7 @@ DB_NAME = os.environ.get("RUNTIME_POSTGRES_DB_NAME")
 DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
-DEBUG_VERSION = "l"
+DEBUG_VERSION = "m"
 
 def main():
     FLASK_SERVER.run('0.0.0.0', port=80)
@@ -59,6 +59,19 @@ def loadDebugCSV():
     # add version
     version = DEBUG_VERSION
     return "{}<br/><br/>csvData: {}\<br/><br/>Out:{}".format(version, str(csvData), str(out))
+
+"""
+Allow client to send the database a CSV file
+nethz: their login name
+file: the csv file containing config.CSV_... content
+"""
+@FLASK_SERVER.route('/setCSV', methods=["POST"])
+def setCSV():
+    data = request.files['file'].read()
+    usr = request.form.get('nethz')
+    # for every specified TA, add them to the database and associate them with the lecture
+    # TODO
+    return "user: {0}\n{1}".format(str(usr), str(data))
 
 # CSV Logic: --------------------------------------------------------------
 
