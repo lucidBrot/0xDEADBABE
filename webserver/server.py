@@ -136,8 +136,12 @@ def main_profile_template():
 def course():
     course_ID = request.args.get('id', default = '0', type = int)
     TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
-    # TODO: when jasper made function to get list of TA_ids
-    return render_template('course.html', course_ID = course_ID, TA=TA)
+#    (ex_id, assi_id, assi_nethz, lec_id, lec_name)[]
+    resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+    # list of TA dicts: name, id, nethz
+    TAlist = [{name, ta_id, ta_nethz} for _, ta_id, ta_nethz, __, ___, in resultlist]
+    (_, _, _, _, lec_name) = resultlist[0]
+    return render_template('course.html', course_id = course_ID, TA_data=TAlist, course_name=lec_name)
 
 
 # CSV Logic: --------------------------------------------------------------
