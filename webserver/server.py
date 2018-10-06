@@ -142,6 +142,7 @@ def main_profile_template():
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         attributes = []
+        ex_id = None
         for rating in ratings:
             (ex_id, title, value) = rating
             # percentage = 10*points
