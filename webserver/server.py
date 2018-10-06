@@ -21,7 +21,10 @@ DB_NAME = os.environ.get("RUNTIME_POSTGRES_DB_NAME")
 DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
-DEBUG_VERSION = "abab"
+FLASK_SERVER.config['PEOPLE_API_URL'] = os.environ.get("RUNTIME_SERVIS_PEOPLE_API_SERVER")
+FLASK_SERVER.config['PEOPLE_API_PORT'] = os.environ.get("RUNTIME_SERVIS_PEOPLE_API_PORT")
+FLASK_SERVER.config['PEOPLE_API_KEY'] = os.environ.get("RUNTIME_SERVIS_PEOPLE_API_KEY")
+DEBUG_VERSION = "ababc"
 
 def main():
     initDatabase()
@@ -36,9 +39,9 @@ def initDatabase():
     try:
         SqlWrapper.InitializeDatabase(sqlFile, 
                 DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        return ""
+        print("Successfully initialzed")
     except Exception as e:
-        return "Init of DB Failed!<br/><br/>{}".format(str(e))
+        print( "Init of DB Failed!<br/><br/>{}".format(str(e)))
 
     
 # Server Routes: ---------------------------------------------------------
@@ -91,7 +94,8 @@ def setCSV():
     csvdict = [{k: v for k, v in zip(keys, value)} for value in values]
     usr = request.form.get('nethz') # the user who sent the request
     debug_log = dbInitializeTeachingAssistants(csvdict)
-    return "user: {0}\n{1}\n\n{2}".format(str(usr), str(csvdict), debug_log)
+#    return "user: {0}\n{1}\n\n{2}".format(str(usr), str(csvdict), debug_log)
+    return redirect("/courses.html", code=302)
 
 """
 Tell database to create user if doesn't exist
@@ -110,8 +114,8 @@ def userLogin():
 #    return retStr
     return redirect("/courses.html", code=302)
 
-@FLASK_SERVER.route('/submitRatings', methods=["POST"]) #TODO: submit Votes from GUI
-def submitVotes():
+@FLASK_SERVER.route('/submitRatings', methods=["POST"])
+def submitRatings():
     ratingsDictListJSON = request.form.get('ratings')
     # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
     ratingsDictList = json.loads(ratingsDictListJSON)
@@ -125,6 +129,18 @@ def submitVotes():
     except Exception as e:
         retStr += "<br/>...failed: {} <br/>".format(str(e))
     return retStr
+
+@FLASK_SERVER.route('/submitComment', methods=["POST"])
+def submitComment():
+    msg = request.form.get('message')
+    nethz_name = session["nethz_cookie"]
+    msg_title = request.form.get('message_title')
+    ex_ID = request.form.get('exercise_id')
+    try:
+        user_id = SqlWrapper.MakeOrGetUser (nethz_name, DB_NAME, DB_USER, DB_PASS, DB_URL, DB_PORT)
+        SqlWrapper.AddComment(ex_ID, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PASS, DB_PORT)
+    except Exception as e:
+        return "Exception: {}".format(str(e))
 
 # Dynamic Templates: ------------------------------------------------------
 
@@ -147,15 +163,13 @@ def main_profile_template():
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         attributes = []
-        ex_id = None
         for rating in ratings:
-            (ex_id, title, value) = rating
-            # percentage = 10*points
-            percentage = 10*value
+            (_, title, value) = rating
+            percentage = config.RATING_SCALE_FACTOR*value
             attributes.append({"title" : title, "percentage" : percentage})
     
         # load comments from database
-        commentsList = SqlWrapper.GetExerciseComments(ex_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        commentsList = SqlWrapper.GetExerciseComments(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         comments=[]
         for comment in commentsList: 
             like_count_c = -1 #JASPER
@@ -163,14 +177,13 @@ def main_profile_template():
             comments.append({
                 "title": title_c, "text": text_C, "like_count":like_count_c, "author":user_nethz
                 })
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_id, attributes=attributes, comments=comments, exercise_id=ex_id, nethzName=session["nethz_cookie"])
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
-    # TODO: ability to like comment
 
 # exactly same thing again, but without comments
 @FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
-def main_profile_template():
+def main_profile_edit_template():
     TA_id = request.args.get('TA_id', default=0, type = int)
     course_id = request.args.get('course_id', default=0, type=int)
     # get Facts from database
@@ -178,14 +191,14 @@ def main_profile_template():
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         attributes = []
-        ex_id = None
+        ex_ID = None
         for rating in ratings:
-            (ex_id, title, value) = rating
+            (ex_ID, title, value) = rating
             # percentage = 10*points
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_id, nethzName=session["nethz_cookie"])
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
 
@@ -194,7 +207,7 @@ def main_profile_template():
 def course():
     course_ID = request.args.get('course_id', default = '0', type = int)
 #    TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
-#    (ex_id, assi_id, assi_nethz, lec_id, lec_name)[]
+#    (ex_ID, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     # list of TA dicts: id, nethz
     TAlist = [{'id': ta_id, 'nethz': ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
