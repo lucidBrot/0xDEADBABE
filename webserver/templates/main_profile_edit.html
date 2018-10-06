@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+{#
+TA_name
+lecture
+attributes -> attribute.title
+nethzName
+#}
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+    <title>Courses
+    </title>
+
+    <script>
+
+        window.onload = function () {
+            if (window.jQuery) {
+                // jQuery is loaded
+                startWebsite();
+            } else {
+                // jQuery is not loaded
+                alert("jQuery doesn't Work");
+            }
+        }
+
+        function startWebsite() {
+            // With JQuery
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
+
+            $(function () {
+                $('[data-toggle="buttons"]').button()
+            });
+        }
+    </script>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">TA Rating</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Courses<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">My Feedback</a>
+            </li>
+        </ul>
+
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+<!--
+<div id="course-card-deck" class="card-deck">"
+    <div class="card flex-row flex-wrap">
+        <div class="card-header border-0">
+            <img src="https://static.vis.ethz.ch/favicon/viscon/apple-touch-icon.png" alt="">
+        </div>
+        <div class="card-block px-2">
+            <h4 class="card-title">Title</h4>
+            <p class="card-text">Description</p>
+            <a href="#" class="btn btn-primary">BUTTON</a>
+        </div>
+        <div class="w-100"></div>
+    </div>
+</div>
+
+<div class="card w-75">
+    <div class="card-body">
+        <h5 class="card-title">Course Name</h5>
+        <p class="card-text">additional information</p>
+    </div>
+</div>
+        <div class="card w-75">
+            <div class="row no-gutters">
+                <div class="col-auto">
+                    <img src="https://static.vis.ethz.ch/favicon/viscon/apple-touch-icon.png" alt="" class="rounded">
+                </div>
+                <div class="col">
+                    <div class="card-block px-2">
+                        <h4 class="card-title">Title</h4>
+                        <p class="card-text">Description</p>
+                        <a href="#" class="btn btn-primary">BUTTON</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+-->
+<script>
+<!-- Used for sending rating selection -->
+var EXERCISE_ID = {{ exercise_id }};
+
+function onRatingSelected(){
+	// send a list of tuples of (exercise_id, rating_title, rating_value)
+	// to '/submitRatings'
+    data = '['
+    $('div[class="testimonial"]').each(function(item,index){
+      data = data + '{"exercise_id" :'+ EXERCISE_ID +', "rating_title" : '+ currRatingTitle +', "rating_value" : '+ currRatingValue +' }';
+
+    });
+    data = data + '}]'
+    '[{"exercise_id" :'+ EXERCISE_ID +', "rating_title" : '+ currRatingTitle +', "rating_value" : '+ currRatingValue +' },{"name" : "Abhinandan", "age" : "20"}]';
+    fetch('/setCSV', {
+        method: 'POST',
+        body: jsonFile
+    }).then(function (response) {
+        //$(this).setAttribute()
+        return console.log(response.text());
+    })
+}
+</script>
+<p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }} </p>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm">
+
+            <h2>
+
+                <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Save Feedback</a>
+            </h2>
+
+            <div class="card-rows">
+                <div class="card w-100">
+                    <ul class="list-group  list-group-flush">
+                      {% for attribute in attributes %}
+                        <li class="list-group-item">
+                            <h5 class="text-center">{{ attribute["title"] }}</h5>
+                                <div class="btn-group btn-group-toggle btn-group-justified d-flex" data-toggle="buttons" role="group"
+                                     aria-label="Basic example">
+                                    <label class="btn btn-outline-secondary w-100">
+                                        <input type="radio" name="options" id="option9" autocomplete="off"> --
+                                    </label>
+                                    <label class="btn btn-outline-secondary w-100">
+                                        <input class="w-20" type="radio" name="options" id="option2" autocomplete="off"> -
+                                    </label>
+                                    <label class="btn btn-outline-secondary active w-100">
+                                        <input class="w-20" type="radio" name="options" id="option3" autocomplete="off" checked> ~
+                                    </label>
+                                    <label class="btn btn-outline-secondary w-100">
+                                        <input class="w-20" type="radio" name="options" id="option4" autocomplete="off"> +
+                                    </label>
+                                    <label class="btn btn-outline-secondary w-100">
+                                        <input class="w-20" type="radio" name="options" id="option5" autocomplete="off"> ++
+                                    </label>
+                            </div>
+                            <div>
+                                <p class="float-left">strongly disagree</p>
+                                <p class="float-right">strongly agree</p>
+                            </div>
+
+
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm">
+            <h2>
+                Comment
+            </h2>
+            <div class="card-rows">
+                <div class="card" style="margin: 10px">
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Title" aria-label="Username"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+                            <textarea class="form-control" aria-label="With textarea"></textarea>
+                        </div>
+                        <footer class="blockquote-footer">{{nethzName}}</footer>
+                    </div>
+                    <div class="container-fluid">
+                        <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Save
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

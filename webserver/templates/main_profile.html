@@ -6,8 +6,9 @@ attributes -> attribute.title
 			attribute.percentage
 comments -> comment.title
 			comment.text
-			comment.lik_count
+			comment.like_count
 			comment.author
+nethzName
 #}
 <html>
 
@@ -66,18 +67,6 @@ comments -> comment.title
 </nav>
 
 <p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }}</p>
-
-<script>
-<!-- Used for sending rating selection -->
-var EXERCISE_ID = {{ exercise_id }};
-
-function onRatingSelected(){
-	// send a list of tuples of (exercise_id, rating_title, rating_value)
-	// to '/submitRatings'
-	
-}
-
-</script>
 
 <div class="container-fluid">
     <div class="row">
