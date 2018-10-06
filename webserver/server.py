@@ -23,7 +23,6 @@ DEBUG_VERSION = "aba"
 
 def main():
     initDatabase()
-    fillDatabase()
     FLASK_SERVER.run('0.0.0.0', port=80)
 
 def initDatabase():
@@ -146,16 +145,10 @@ def course():
     # list of TA dicts: name, id, nethz
     TAlist = [{name, ta_id, ta_nethz} for _, ta_id, ta_nethz, __, name in resultlist]
     (_, _, _, _, lec_name) = resultlist[0]
-    return render_template('course.html', nethz=ta_nethz,course_id = course_ID, TA_data=TAlist, course_name=lec_name)
+    return render_template('course.html',course_id = course_ID, TA_data=TAlist, course_name=lec_name)
 
 
 # CSV Logic: --------------------------------------------------------------
-
-def fillDatabase():
-    data = parseDebugCSV()
-    log = dbInitializeTeachingAssistants(data)
-    print(log)
-
 
 """
 return: a list of OrderedDictionaries with the keys config.CSV_TA_NETHZ and CSV_TA_NETHZ
