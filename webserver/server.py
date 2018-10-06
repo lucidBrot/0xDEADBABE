@@ -198,7 +198,7 @@ def main_profile_edit_template():
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
+        return render_template('main_profile_edit.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
 
