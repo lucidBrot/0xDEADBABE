@@ -5,6 +5,7 @@ from flask import request, send_from_directory, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 import csv
+import config # diverse configurable variables
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -20,8 +21,7 @@ FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}
 DB = SQLAlchemy(FLASK_SERVER)
 
 def main():
-    #FLASK_SERVER.run('0.0.0.0', port=80)
-    parseCSV('./debug_inputs/inputs.csv')
+    FLASK_SERVER.run('0.0.0.0', port=80)
     
 # Sample to receive GET request and argument /?name=asdf
 @FLASK_SERVER.route('/', methods=["GET"])
@@ -48,6 +48,11 @@ def parseCSV(csvFile):
         reader = csv.DictReader(f)
         mylist = [line for line in reader]
         print(mylist)
+        # use config.CSV_TA_NETHZ and config.CSV_LECTURE_NAME
+        #TODO send data to database
+
+def parseDebugCSV():
+    parseCSV('./debug_inputs/inputs.csv')
 
 
 if __name__ == '__main__':
