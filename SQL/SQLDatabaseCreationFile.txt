@@ -78,6 +78,8 @@ CREATE TABLE Attendee (
 
 -- #### FUNCTIONS ####
 
+DROP FUNCTION IF EXISTS MakeOrGetUser(varchar(32));
+
 -- NOTIFY USER LOGIN
 CREATE OR REPLACE FUNCTION MakeOrGetUser (nethz varchar(32)) 
 RETURNS int AS $$
@@ -188,7 +190,7 @@ RETURNS TABLE (
   END; 
 $$ LANGUAGE plpgsql; 
                     
-DROP FUNCTION IF EXISTS GetExercise;
+DROP FUNCTION IF EXISTS GetExercise(int, int);
                     
 -- GET EXERCISE
 CREATE OR REPLACE FUNCTION GetExercise (lect_id int, assi_id int) 
@@ -209,7 +211,7 @@ RETURNS TABLE (
   END; 
 $$ LANGUAGE plpgsql; 
 
-DROP FUNCTION IF EXISTS GetExerciseRatings;
+DROP FUNCTION IF EXISTS GetExerciseRatings(int);
 
 -- GET EXERCISE RATINGS
 CREATE OR REPLACE FUNCTION GetExerciseRatings (exer_id int) 
@@ -229,7 +231,7 @@ RETURNS TABLE (
   END; 
 $$ LANGUAGE plpgsql; 
 
-DROP FUNCTION IF EXISTS GetLectureExercise;
+DROP FUNCTION IF EXISTS GetLectureExercise(int);
 
 -- GET LECTURE ASSISTANTS
 CREATE OR REPLACE FUNCTION GetLectureExercises (lect_id int) 
