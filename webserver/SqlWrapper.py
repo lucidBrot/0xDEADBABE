@@ -30,10 +30,10 @@ def MakeOrGetLecture (lecture_name, dbname, user, password, host, port):
 nethz is limited to 32 characters
 lecture_name is limited to 128 characters
 """       
-def MakeExercise (nethz, lecture_name, dbname, user, password, host, port):
+def MakeOrGetExercise (nethz, lecture_name, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("DO $$ BEGIN PERFORM MakeExercise(%s::varchar(32), %s::varchar(128)); END; $$;", (nethz, lecture_name)) 
+        cur.execute("DO $$ BEGIN PERFORM MakeOrGetExercise(%s::varchar(32), %s::varchar(128)); END; $$;", (nethz, lecture_name)) 
         id = cur.fetchone()[0]        
         conn.commit()
         cur.close()
@@ -43,12 +43,10 @@ def MakeExercise (nethz, lecture_name, dbname, user, password, host, port):
 def ClearExercises (dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("DO $$ BEGIN PERFORM ClearExercises(); END; $$;") 
-        id = cur.fetchone()[0]        
+        cur.execute("DO $$ BEGIN PERFORM ClearExercises(); END; $$;")      
         conn.commit()
         cur.close()
         conn.close()
-        return id
 
 
 """

@@ -30,11 +30,12 @@ CREATE TABLE Exercise (
 
 -- COMMENTARY
 CREATE TABLE Commentary (
+	Commentary_ID int PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
 	Title varchar(64) NOT NULL,
 	Text varchar(1024) NOT NULL,
-	PRIMARY KEY (User_ID, Exercise_ID)
+	UNIQUE (User_ID, Exercise_ID)
 );
 
 -- RATING
@@ -44,6 +45,13 @@ CREATE TABLE Rating (
 	Field int NOT NULL,
 	RatingValue int NOT NULL,
 	PRIMARY KEY (User_ID, Exercise_ID)
+);
+
+-- RATING
+CREATE TABLE CommentaryLike (
+	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
+	Commentary_ID int REFERENCES Commentary ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (User_ID, Commentary_ID)
 );
 
 -- ATTENDS
@@ -94,7 +102,7 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql;
 
 -- MAKE EXERCISE
-CREATE OR REPLACE FUNCTION MakeExercise (nethz varchar(32), lecture_name varchar(128)) 
+CREATE OR REPLACE FUNCTION MakeOrGetExercise (nethz varchar(32), lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE exer_id int;
   DECLARE user_id int;
@@ -108,7 +116,7 @@ RETURNS int AS $$
       THEN
         UPDATE Exercise 
         SET IsActive = True 
-        WHERE Exercise.Assistant_ID = user_id AND Exercise.Lecture_ID = lect_id;
+        WHERE Exercise.Exercise_ID = exer_id;
       ELSE
         INSERT INTO Exercise (Assistant_ID, Lecture_ID)
         VALUES (user_id, lecture_id)
