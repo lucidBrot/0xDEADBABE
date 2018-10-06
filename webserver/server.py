@@ -60,6 +60,20 @@ def loadDebugCSV():
     version = DEBUG_VERSION
     return "{}<br/><br/>csvData: {}\<br/><br/>Out:{}".format(version, str(csvData), str(out))
 
+"""
+Allow client to send the database a CSV file
+nethz: their login name
+auth_token: verification that they are actually the specified user
+file: the csv file containing config.CSV_... content
+"""
+@FLASK_SERVER.route('/setCSV', methods=["POST"])
+def setCSV():
+    data = request.files['file'].read()
+    usr = request.form.get('nethz')
+    auth = request.form.get('auth_token')
+    # TODO: pass data on to database and make sure somewhere we verify that the user is admin
+    return "user: {0}\nauth: {2}\n{1}".format(str(usr), str(data), str(auth))
+
 # CSV Logic: --------------------------------------------------------------
 
 """
