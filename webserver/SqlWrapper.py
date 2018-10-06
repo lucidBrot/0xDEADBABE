@@ -6,7 +6,7 @@ nethz is limited to 32 characters
 def MakeOrGetUser (nethz, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("DO $$ BEGIN PERFORM MakeOrGetUser(%s); END; $$;", (nethz,))    
+        cur.execute("SELECT MakeOrGetUser(%s);", (nethz,))    
         id = cur.fetchone()[0]
         conn.commit()
         cur.close()
@@ -19,7 +19,7 @@ lecture_name is limited to 128 characters
 def MakeOrGetLecture (lecture_name, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("DO $$ BEGIN PERFORM MakeOrGetLecture(%s::varchar(128)); END; $$;", (lecture_name,)) 
+        cur.execute("SELECT MakeOrGetLecture(%s::varchar(128));", (lecture_name,)) 
         id = cur.fetchone()[0]        
         conn.commit()
         cur.close()
@@ -33,7 +33,7 @@ lecture_name is limited to 128 characters
 def MakeOrGetExercise (nethz, lecture_name, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("DO $$ BEGIN PERFORM MakeOrGetExercise(%s::varchar(32), %s::varchar(128)); END; $$;", (nethz, lecture_name)) 
+        cur.execute("SELECT MakeOrGetExercise(%s::varchar(32), %s::varchar(128));", (nethz, lecture_name)) 
         id = cur.fetchone()[0]        
         conn.commit()
         cur.close()
