@@ -108,7 +108,11 @@ def userLogin():
 
 @FLASK_SERVER.route('/courses.html')
 def courses_template():
-    return render_template('courses.html')
+    courses = [
+            (1337, "Physically Based Stimulation"),
+            (1234, "Distributed Süstems")
+            ]
+    return render_template('courses.html', courses=courses)
 
 @FLASK_SERVER.route('/main_profile.html')
 def main_profile_template():
