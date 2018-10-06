@@ -189,7 +189,7 @@ RETURNS TABLE (
 $$ LANGUAGE plpgsql; 
                                                              
 -- GET EXERCISE
-CREATE OR REPLACE FUNCTION GetExercise (exer_id int) 
+CREATE OR REPLACE FUNCTION GetExercise (lecture_id int, assistant_id int) 
 RETURNS TABLE (
     Exercise_ID int,
     Assistant_ID int,
@@ -203,7 +203,7 @@ RETURNS TABLE (
       FROM Exercise
       JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
       JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
-      WHERE Exercise.Exercise_ID = exer_id;    
+      WHERE Lecture.Lecture_ID = lecture_id AND Exercise.Assistant_ID = assistant_id;    
   END; 
 $$ LANGUAGE plpgsql; 
 
@@ -224,3 +224,4 @@ RETURNS TABLE (
       GROUP BY RatingField.RatingField_ID;
   END; 
 $$ LANGUAGE plpgsql; 
+
