@@ -34,7 +34,7 @@ function postreq(){
 	var data = new FormData()
 	data.append('nethz', document.getElementById('inputUsername').value)
 
-	fetch('/setCSV', {
+	fetch('/userLogin', {
 	  method: 'POST',
 	  body: data
 	})
