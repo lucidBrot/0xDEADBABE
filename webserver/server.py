@@ -7,6 +7,7 @@ import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
 from io import StringIO
 from flask import render_template
+from flask import session
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -23,6 +24,7 @@ DEBUG_VERSION = "abab"
 
 def main():
     initDatabase()
+    FLASK_SERVER.config["SECRET_KEY"] = config.SECRET
     FLASK_SERVER.run('0.0.0.0', port=80)
 
 def initDatabase():
@@ -99,7 +101,7 @@ def userLogin():
     retStr = "{} logged in. Tellling DB...<br/>".format(nethz)
     try:
         SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        # TODO: Get guid and create cookie.
+        session["nethz_cookie"] = nethz
         retStr += "done.<br/>"
     except Exception as e:
         retStr += "failed: {} <br/>".format(str(e))
@@ -108,7 +110,7 @@ def userLogin():
 @FLASK_SERVER.route('/submitVotes', methods=["POST"]) #TODO: submit Votes from GUI
 def submitVotes():
     ratingsList = request.form.get('ratings')
-    user_nethz = request.form.get('nethz')
+    user_nethz = session["nethz_cookie"]
     retStr = "Got ratings: {}".format(str(ratingsList))
     try:
         SqlWrapper.AddExerciseRatings(ratingsList, user_nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
