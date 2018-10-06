@@ -91,7 +91,7 @@ RETURNS void AS $$
 	  
       IF user_id is NULL
       THEN		  
-		RAISE EXCEPTION 'Nonexistent username --> %', usrname;          
+		INSERT INTO "User" (Username) VALUES (usrname) RETURNING "User".user_id INTO user_id;
       END IF;
 	  
 	  IF EXISTS(SELECT * FROM Assistant WHERE Assistant_ID = user_id)
@@ -105,7 +105,7 @@ RETURNS void AS $$
   END; 
 $$ LANGUAGE plpgsql;
 
--- MAKE ASSISTANT
+-- ADD LECTURE IF UNKNOWN
 CREATE OR REPLACE FUNCTION AddLectureIfUnknown (new_name varchar(128)) 
 RETURNS int AS $$
   DECLARE lecture_id int;
