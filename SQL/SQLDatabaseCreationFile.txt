@@ -267,19 +267,25 @@ RETURNS TABLE (
     User_ID int,
     User_Nethz varchar(32),
     Creation_Date timestamp,
+    Like_Count int,
     Title varchar(64),
     Text varchar(1024)
   )
   AS $$
   BEGIN        
-	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Nethz_Name, Commentary.Creation_Date, Commentary.Title, Commentary.Text
+	  RETURN QUERY SELECT 
+            Exercise.Exercise_ID, 
+            "User".User_ID, 
+            "User".Nethz_Name, 
+            Commentary.Creation_Date, 
+            (SELECT COUNT(*) FROM CommentaryLike WHERE CommentaryLike.Commentary_ID = Commentary.Commentary_ID)::int as LikeCount, 
+            Commentary.Title, 
+            Commentary.Text
       FROM Exercise
       JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
       JOIN Commentary ON Commentary.Exercise_ID = Exercise.Exercise_ID
       WHERE Exercise.Exercise_ID = exec_id
-      GROUP BY Commentary.Commentary_ID
-      ORDER BY (SELECT COUNT(*) FROM CommentaryLike WHERE CommentaryLike.Commentary_ID = Commentary.Commentary_ID) DESC
-      THEN BY Commentary.Creation_Date DESC;      
+      ORDER BY LikeCount DESC, Commentary.Creation_Date;      
   END; 
 $$ LANGUAGE plpgsql; 
 

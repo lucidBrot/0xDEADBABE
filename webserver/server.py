@@ -38,9 +38,9 @@ def initDatabase():
     try:
         SqlWrapper.InitializeDatabase(sqlFile, 
                 DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        return ""
+        print("Successfully initialzed")
     except Exception as e:
-        return "Init of DB Failed!<br/><br/>{}".format(str(e))
+        print( "Init of DB Failed!<br/><br/>{}".format(str(e)))
 
     
 # Server Routes: ---------------------------------------------------------
@@ -133,10 +133,10 @@ def submitComment():
     msg = request.form.get('message')
     nethz_name = session["nethz_cookie"]
     msg_title = request.form.get('message_title')
-    ex_id = request.form.get('exercise_id')
+    ex_ID = request.form.get('exercise_id')
     try:
         user_id = SqlWrapper.MakeOrGetUser (nethz_name, DB_NAME, DB_USER, DB_PASS, DB_URL, DB_PORT)
-        SqlWrapper.AddComment(ex_id, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PASS, DB_PORT)
+        SqlWrapper.AddComment(ex_ID, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PASS, DB_PORT)
     except Exception as e:
         return "Exception: {}".format(str(e))
 
@@ -175,7 +175,7 @@ def main_profile_template():
             comments.append({
                 "title": title_c, "text": text_C, "like_count":like_count_c, "author":user_nethz
                 })
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_id, attributes=attributes, comments=comments, exercise_id=ex_id, nethzName=session["nethz_cookie"])
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
 
