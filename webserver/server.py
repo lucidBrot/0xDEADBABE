@@ -176,7 +176,7 @@ def parseDebugCSV():
 
 def dbInitializeTeachingAssistants(csvData):
     returnString = ""
-    # Clear Exercises
+    # Clear Exercises 
     try:
         SqlWrapper.ClearExercises(DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e:
