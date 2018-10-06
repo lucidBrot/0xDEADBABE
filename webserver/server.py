@@ -7,6 +7,7 @@ import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
 from io import StringIO
 from flask import render_template
+from flask import session, redirect
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -19,11 +20,11 @@ DB_NAME = os.environ.get("RUNTIME_POSTGRES_DB_NAME")
 DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
-DEBUG_VERSION = "ababC"
+DEBUG_VERSION = "abab"
 
 def main():
     initDatabase()
-    fillDatabase()
+    FLASK_SERVER.config["SECRET_KEY"] = config.SECRET
     FLASK_SERVER.run('0.0.0.0', port=80)
 
 def initDatabase():
@@ -97,12 +98,26 @@ nethz: which user logged in
 @FLASK_SERVER.route('/userLogin', methods=["POST"])
 def userLogin():
     nethz = request.form.get('nethz')
-    retStr = "{} logged in. Tellling DB...<br/>".format(nethz)
+    retStr = "{} logged in... Tellling DB...<br/>".format(nethz)
     try:
         SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        session["nethz_cookie"] = nethz
         retStr += "done.<br/>"
     except Exception as e:
         retStr += "failed: {} <br/>".format(str(e))
+#    return retStr
+    return redirect("/courses.html", code=302)
+
+@FLASK_SERVER.route('/submitVotes', methods=["POST"]) #TODO: submit Votes from GUI
+def submitVotes():
+    ratingsList = request.form.get('ratings')
+    user_nethz = session["nethz_cookie"]
+    retStr = "Got ratings: {}".format(str(ratingsList))
+    try:
+        SqlWrapper.AddExerciseRatings(ratingsList, user_nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        retStr+="<br/>...done."
+    except Exception as e:
+        retStr += "<br/>...failed: {} <br/>".format(str(e))
     return retStr
 
 # Dynamic Templates: ------------------------------------------------------
@@ -124,7 +139,6 @@ def main_profile_template():
     # get Facts from database
     try:
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        # TODO: load attributes from database!
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         attributes = []
         for rating in ratings:
@@ -133,7 +147,7 @@ def main_profile_template():
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments)
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lecture_name, attributes=attributes, comments=comments, exercise_id=ex_id)
     except Exception as e:
         return "Exception! {}".format(str(e))
 
@@ -155,11 +169,6 @@ def course():
 
 # CSV Logic: --------------------------------------------------------------
 
-def fillDatabase():
-    data = parseDebugCSV()
-    log = dbInitializeTeachingAssistants(data)
-    print(log)
-
 """
 return: a list of OrderedDictionaries with the keys config.CSV_TA_NETHZ and CSV_TA_NETHZ
 """
@@ -176,7 +185,7 @@ def parseDebugCSV():
 
 def dbInitializeTeachingAssistants(csvData):
     returnString = ""
-    # Clear Exercises 
+    # Clear Exercises
     try:
         SqlWrapper.ClearExercises(DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e:

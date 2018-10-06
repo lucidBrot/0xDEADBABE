@@ -40,6 +40,19 @@ def MakeOrGetExercise (nethz, lecture_name, dbname, user, password, host, port):
         conn.close()
         return id
         
+"""
+title is limited to 128 characters
+"""       
+def MakeOrGetRatingField (title, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT * FROM MakeOrGetRatingField(%s::varchar(128));", (title, )) 
+        id = cur.fetchone()[0]        
+        conn.commit()
+        cur.close()
+        conn.close()
+        return id        
+        
 def ClearExercises (dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
@@ -55,13 +68,24 @@ def AddExerciseRatings (ratings_list, user_nethz, dbname, user, password, host, 
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()
         # ratings_list is a list of several (Exercise_ID, Rating_Title, Rating_Value)
-        for (exercise_id, rating_title, rating_value) in ratings_list
+        for (exercise_id, rating_title, rating_value) in ratings_list:
             cur.execute("DO $$ BEGIN PERFORM AddExerciseRatings(%s, %s, %s, %s); END; $$;",(exercise_id, rating_title, user_nethz, rating_value))
         conn.commit()
         cur.close()
         conn.close()
 
-
+"""
+Adds a new comment from the given user to the given exercise with title and text.
+"""
+def AddComment (exercise_id, user_id, title, text, user_nethz, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM AddComment(%s::int, %s::int, %s::varchar(64), %s::varchar(1024));", (exec_id, usr_id, title, text))
+        id = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return id
         
 
 """
