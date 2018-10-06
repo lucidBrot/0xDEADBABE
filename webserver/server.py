@@ -145,7 +145,7 @@ def course():
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     # list of TA dicts: id, nethz
     TAlist = [{'id': ta_id, 'nethz': ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
-    
+
     # Setting the lecture name. If resultlist is empty for some reason, this is the default we use for now
     lec_name = "Empty lecture"
     if len(resultlist) != 0:
