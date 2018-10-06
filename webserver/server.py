@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 import csv
 import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
+import time
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -52,7 +53,9 @@ def loadDebugCSV():
     csvData = parseDebugCSV()
     # tell database about csv content
     problem = dbInitializeTeachingAssistants(csvData)
-    return "csvData: {}\<br/>Problem:{}".format(str(csvData), str(problem))
+    # add timestamp
+    millis = int(round(time.time()*1000))
+    return "{}<br/><br/>csvData: {}\<br/><br/>Problem:{}".format(millis, str(csvData), str(problem))
 
 # CSV Logic: --------------------------------------------------------------
 
