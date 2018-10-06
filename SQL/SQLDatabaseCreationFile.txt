@@ -3,6 +3,7 @@
 DROP TABLE IF EXISTS CommentaryLike;
 DROP TABLE IF EXISTS Commentary;
 DROP TABLE IF EXISTS Rating;
+DROP TABLE IF EXISTS RatingField;
 DROP TABLE IF EXISTS Attendee;
 DROP TABLE IF EXISTS Exercise;
 DROP TABLE IF EXISTS Lecture;
@@ -40,12 +41,18 @@ CREATE TABLE Commentary (
 	UNIQUE (User_ID, Exercise_ID)
 );
 
+CREATE TABLE RatingField (
+    RatingField_ID serial PRIMARY KEY,
+    IsActive boolean NOT NULL DEFAULT TRUE,
+    Title varchar (128) NOT NULL
+);
+
 -- RATING
 CREATE TABLE Rating (
     Rating_ID serial PRIMARY KEY,
 	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
-	Field int NOT NULL,
+	Field int NOT NULL REFERENCES RatingField ON DELETE CASCADE ON UPDATE CASCADE,
 	RatingValue int NOT NULL,
 	UNIQUE (User_ID, Exercise_ID)
 );
@@ -176,5 +183,24 @@ RETURNS TABLE (
       JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
       WHERE Exercise.IsActive = True;    
   END; 
-$$ LANGUAGE plpgsql;                                                              
+$$ LANGUAGE plpgsql; 
+                                                             
+-- GET EXERCISE
+CREATE OR REPLACE FUNCTION GetExercise (exer_id int) 
+RETURNS TABLE (
+    Exercise_ID int,
+    Assistant_ID int,
+    Assistant_Nethz varchar(32),
+    Lecture_ID int,
+    Lecture_Name varchar(128)
+  )
+  AS $$
+  BEGIN        
+	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Name, Lecture.Lecture_ID, Lecture.Name 
+      FROM Exercise
+      JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
+      JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
+      WHERE Exercise.Exercise_ID = exer_id;    
+  END; 
+$$ LANGUAGE plpgsql; 
 
