@@ -5,7 +5,7 @@ from flask import request, send_from_directory, url_for
 import csv
 import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
-import tempfile
+from io import StringIO
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -71,11 +71,15 @@ file: the csv file containing config.CSV_... content
 @FLASK_SERVER.route('/setCSV', methods=["POST"])
 def setCSV():
     data = request.files['file'].read()
-    rdr = csv.DictReader(str(data))
-    csvdata = [line for line in rdr]
+    f = StringIO(data.decode())
+    reader = csv.reader(f, delimiter=',')
+    csvdata = [line for line in reader]
+    keys = csvdata[0]
+    values = csvdata[1:]
+    csvdict = [{k: v for k, v in zip(keys, value)} for value in values]
     usr = request.form.get('nethz') # the user who sent the request
-    debug_log = dbInitializeTeachingAssistants(csvdata)
-    return "user: {0}\n{1}\n\n{2}".format(str(usr), str(csvdata), debug_log)
+    debug_log = dbInitializeTeachingAssistants(csvdict)
+    return "user: {0}\n{1}\n\n{2}".format(str(usr), str(csvdict), debug_log)
 
 # CSV Logic: --------------------------------------------------------------
 
