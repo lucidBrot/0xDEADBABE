@@ -8,6 +8,7 @@ import SqlWrapper # jasper's sql functions for communication with the DB without
 from io import StringIO
 from flask import render_template
 from flask import session, redirect
+import random
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -208,9 +209,34 @@ def course():
 # CSV Logic: --------------------------------------------------------------
 
 def fillDatabase():
+    # Reusing the functions from Eric
+    # Filling the database with exercises also adds the TAs and lectures
     data = parseDebugCSV()
     log = dbInitializeTeachingAssistants(data)
     print(log)
+
+    # Extract key and value from the dict from parseDebugCSV() and get the resp. exercise ID
+    exercise_ids = [MakeOrGetExercise(nethz, lecture_name, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+                        for nethz, lecture_name in data]
+    fake_reviewers_nethz = ["alibaba", "unclebens", "suntzu"]
+    rating_titles = ["Speech Clarity", "Quality of Exercises", "Quality of Theory"]
+
+    for title in rating_titles:
+        try:
+            MakeOrGetRatingField(title, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        catch Exception as e:
+            print("Exception! {}".format(str(e)))
+
+    for ex_id in exercise_ids:
+        for rating_title in rating_titles:
+            for nethz in fake_reviewers_nethz:
+                value = random.randint(1,5)
+                rating_tuple = (ex_id, title, value)
+                try:
+                    AddExerciseRatings(rating_tuple, nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+                catch Exception as e:
+                    print("Exception! {}".format(str(e)))
+    
 
 
 """
