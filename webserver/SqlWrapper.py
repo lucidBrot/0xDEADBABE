@@ -6,7 +6,7 @@ nethz is limited to 32 characters
 def MakeOrGetUser (nethz, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("SELECT * FROM MakeOrGetUser(%s::varchar(32));", (nethz,))    
+        cur.execute("SELECT * FROM MakeOrGetUser(%s);", (nethz,))    
         id = cur.fetchone()[0]
         conn.commit()
         cur.close()
@@ -40,45 +40,6 @@ def MakeOrGetExercise (nethz, lecture_name, dbname, user, password, host, port):
         conn.close()
         return id
         
-"""
-title is limited to 128 characters
-"""       
-def MakeOrGetExercise (title, dbname, user, password, host, port):
-        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
-        cur = conn.cursor()     
-        cur.execute("SELECT * FROM MakeOrGetRatingField(%s::varchar(128));", (title, )) 
-        id = cur.fetchone()[0]        
-        conn.commit()
-        cur.close()
-        conn.close()
-        return id
-        
-"""
-Get user token
-"""       
-def GetUserToken (user_id, dbname, user, password, host, port):
-        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
-        cur = conn.cursor()     
-        cur.execute("SELECT * FROM GetUserToken(%s::int);", (user_id, )) 
-        uuid = cur.fetchone()[0]        
-        conn.commit()
-        cur.close()
-        conn.close()
-        return uuid
-        
-"""
-Get user by token
-"""       
-def GetUserByToken (token, dbname, user, password, host, port):
-        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
-        cur = conn.cursor()     
-        cur.execute("SELECT * FROM GetUserByToken(%s::uuid);", (token, )) 
-        id = cur.fetchone()[0]        
-        conn.commit()
-        cur.close()
-        conn.close()
-        return id        
-        
 def ClearExercises (dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
@@ -94,8 +55,8 @@ def AddExerciseRatings (ratings_list, user_nethz, dbname, user, password, host, 
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()
         # ratings_list is a list of several (Exercise_ID, Rating_Title, Rating_Value)
-        for (exercise_id, rating_title, rating_value) in ratings_list
-            cur.execute("DO $$ BEGIN PERFORM AddExerciseRatings(%s::int, %s::int, %s::int, %s::int); END; $$;",(exercise_id, rating_title, user_nethz, rating_value))
+        for (exercise_id, rating_title, rating_value) in ratings_list:
+            cur.execute("DO $$ BEGIN PERFORM AddExerciseRatings(%s, %s, %s, %s); END; $$;",(exercise_id, rating_title, user_nethz, rating_value))
         conn.commit()
         cur.close()
         conn.close()
@@ -138,7 +99,7 @@ Gets a specific exercise
 def GetExercise (lecture_id, assistant_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("SELECT * FROM GetExercise(%s::int, %s::int);", (lecture_id, assistant_id)) 
+        cur.execute("SELECT * FROM GetExercise(%s, %s);", (lecture_id, assistant_id)) 
         exercise = cur.fetchone()
         conn.commit()
         cur.close()
@@ -152,7 +113,7 @@ Gets all active exercises as list of tuples
 def GetLectureExercises (lecture_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("SELECT * FROM GetLectureExercises(%s::int);", (lecture_id,)) 
+        cur.execute("SELECT * FROM GetLectureExercises(%s);", (lecture_id,)) 
         exercises = cur.fetchall()
         conn.commit()
         cur.close()
@@ -166,7 +127,7 @@ Gets the ratings for a specific exercise
 def GetExerciseRatings (exercise_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("SELECT * FROM GetExerciseRatings(%s::int);", (exercise_id,)) 
+        cur.execute("SELECT * FROM GetExerciseRatings(%s);", (exercise_id,)) 
         ratings = cur.fetchall()
         conn.commit()
         cur.close()
