@@ -98,17 +98,22 @@ def parseDebugCSV():
     return parseCSV('./debug_inputs/inputs.csv')
 
 def dbInitializeTeachingAssistants(csvData):
-    # TODO: clear database
     returnString = ""
+    # Clear Exercises
+    try:
+        SqlWrapper.ClearExercises(DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+    except Exception as e:
+        returnString+="Clearing Exercises:<br/>{}<br/><br/>".format(str(e))
+    # For data row, add to database if needed
     for i in range(len(csvData)):
         try:
-            returnString += "{0},{1},{2},{3},{4},{5} <br/>".format(csvData[i][config.CSV_TA_NETHZ], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-            SqlWrapper.MakeAssistant(csvData[i][config.CSV_TA_NETHZ],
-                DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-            # TODO: add lectures to database
-            # TODO: connect TA to lecture
+            returnString += "<br/>Adding ({0},{1})".format(csvData[i][config.CSV_TA_NETHZ], csvData[i][config.CSV_LECTURE_NAME]) 
+            SqlWrapper.MakeOrGetExercise(
+                    csvData[i][config.CSV_TA_NETHZ], csvData[i][config.CSV_LECTURE_NAME],
+                    DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         except Exception as e:
-            returnString+=str(e)+" <br/>"
+            returnString+=" failed with exception {}<br/>".format(str(e))
+
     return returnString
 
 

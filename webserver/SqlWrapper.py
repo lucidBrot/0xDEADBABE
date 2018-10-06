@@ -43,7 +43,7 @@ def MakeOrGetExercise (nethz, lecture_name, dbname, user, password, host, port):
 def ClearExercises (dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("DO $$ BEGIN PERFORM ClearExercises(); END; $$;")      
+        cur.execute("DO $$ BEGIN PERFORM ClearExercises(); END; $$;") 
         conn.commit()
         cur.close()
         conn.close()
