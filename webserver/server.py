@@ -19,7 +19,7 @@ DB_NAME = os.environ.get("RUNTIME_POSTGRES_DB_NAME")
 DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
-DEBUG_VERSION = "aa"
+DEBUG_VERSION = "aba"
 
 def main():
     initDatabase()
@@ -143,9 +143,9 @@ def course():
 #    (ex_id, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     # list of TA dicts: name, id, nethz
-    TAlist = [{name, ta_id, ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
+    TAlist = [{name, ta_id, ta_nethz} for _, ta_id, ta_nethz, __, name in resultlist]
     (_, _, _, _, lec_name) = resultlist[0]
-    return render_template('course.html', course_id = course_ID, TA_data=TAlist, course_name=lec_name)
+    return render_template('course.html', nethz=ta_nethz,course_id = course_ID, TA_data=TAlist, course_name=lec_name)
 
 
 # CSV Logic: --------------------------------------------------------------
