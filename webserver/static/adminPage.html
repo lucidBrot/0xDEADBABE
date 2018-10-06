@@ -92,6 +92,10 @@
                     method: 'POST',
                     body: data
                 }).then(function (response) {
+                    if(true){
+                        alert("you've uploaded " + data.get('file').name + " successfully");
+                    }
+                    //$(this).setAttribute()
                     return console.log(response.text());
                 })
             })
