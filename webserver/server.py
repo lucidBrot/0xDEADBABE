@@ -172,9 +172,21 @@ def course():
 # CSV Logic: --------------------------------------------------------------
 
 def fillDatabase():
+    # Reusing the function from Eric for submitting exercises
+    # Filling the database with exercises automatically also fill the TA table and the course table
     data = parseDebugCSV()
     log = dbInitializeTeachingAssistants(data)
     print(log)
+
+    # Generating rating fields
+    rating_names = ["Speech Clarity", "Exercise Discussion", "Explanation of Theory"]
+    for rating_name in rating_names:
+        try:
+            SqlWrapper.MakeOrGetRatingField(rating_name, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        except Exception as e:
+            print("Exception! {}".format(str(e)))
+
+
 
 
 """
