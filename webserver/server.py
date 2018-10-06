@@ -110,7 +110,7 @@ def main_profile_template():
     return flask.render_template('main_profile.html')
 
 @FLASK_SERVER.route('/TA_profile.html')
-def main_profile_template():
+def ta_profile_template():
     return flask.render_template('TA_profile.html')
 
 
