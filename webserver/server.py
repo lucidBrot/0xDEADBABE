@@ -5,6 +5,7 @@ from flask import request, send_from_directory, url_for
 import csv
 import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
+import tempfile
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -70,10 +71,11 @@ file: the csv file containing config.CSV_... content
 @FLASK_SERVER.route('/setCSV', methods=["POST"])
 def setCSV():
     data = request.files['file'].read()
-    usr = request.form.get('nethz')
-    # for every specified TA, add them to the database and associate them with the lecture
-    # TODO
-    return "user: {0}\n{1}".format(str(usr), str(data))
+    rdr = csv.DictReader(str(data))
+    csvdata = [line for line in rdr]
+    usr = request.form.get('nethz') # the user who sent the request
+    debug_log = dbInitializeTeachingAssistants(csvdata)
+    return "user: {0}\n{1}\n\n{2}".format(str(usr), str(csvdata), debug_log)
 
 # CSV Logic: --------------------------------------------------------------
 
@@ -92,12 +94,15 @@ def parseDebugCSV():
     return parseCSV('./debug_inputs/inputs.csv')
 
 def dbInitializeTeachingAssistants(csvData):
+    # TODO: clear database
     returnString = ""
     for i in range(len(csvData)):
         try:
             returnString += "{0},{1},{2},{3},{4},{5} <br/>".format(csvData[i][config.CSV_TA_NETHZ], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
             SqlWrapper.MakeAssistant(csvData[i][config.CSV_TA_NETHZ],
                 DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+            # TODO: add lectures to database
+            # TODO: connect TA to lecture
         except Exception as e:
             returnString+=str(e)+" <br/>"
     return returnString
