@@ -43,12 +43,16 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Courses<span class="sr-only">(current)</span></a>
+           <li class="nav-item">
+                <a class="nav-link" href="/courses.html">Courses<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">My Feedback</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/static/adminPage.html">Admin</a>
+            </li>
+
         </ul>
 
         <form class="form-inline my-2 my-lg-0">
@@ -66,7 +70,7 @@
 
     <ul class="list-group list-group-flush">
         {% for TA in TA_data %}
-            <a href="main_profile?TA_id={{ TA['id'] }}&course_id={{ course_id }}">
+            <a href="main_profile.html?TA_id={{ TA['id'] }}&course_id={{ course_id }}">
                 <li class="list-group-item">
                     {{ TA['nethz'] }}
                 </li>

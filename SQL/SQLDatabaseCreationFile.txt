@@ -22,7 +22,7 @@ CREATE UNIQUE INDEX UIX_LectureName ON Lecture (Name);
 -- USER
 CREATE TABLE "User" (
 	User_ID serial PRIMARY KEY,
-	Nethz_Name varchar(32) NOT NULL	
+	Nethz_Name varchar(32) NOT NULL
 );
 CREATE UNIQUE INDEX UIX_User ON "User" (Nethz_Name);
 
@@ -36,9 +36,9 @@ CREATE TABLE Exercise (
 
 -- COMMENTARY
 CREATE TABLE Commentary (
-	Commentary_ID serial PRIMARY KEY,
-	User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
+	Commentary_ID serial PRIMARY KEY,	
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
+    User_ID int REFERENCES "User" ON DELETE CASCADE ON UPDATE CASCADE,
 	Title varchar(64) NOT NULL,
 	Text varchar(1024) NOT NULL,
 	UNIQUE (User_ID, Exercise_ID)
@@ -80,7 +80,7 @@ CREATE TABLE Attendee (
 
 DROP FUNCTION IF EXISTS MakeOrGetUser(varchar(32));
 
--- NOTIFY USER LOGIN
+-- MAKE OR GET USER
 CREATE OR REPLACE FUNCTION MakeOrGetUser (nethz varchar(32)) 
 RETURNS int AS $$
   DECLARE user_id int;
@@ -99,7 +99,7 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql;
 
--- NOTIFY USER LOGIN
+-- MAKE OR GET LECTURE
 CREATE OR REPLACE FUNCTION MakeOrGetLecture (lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE lect_id int;
@@ -118,7 +118,7 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql;
 
--- MAKE EXERCISE
+-- MAKE OR GET EXERCISE
 CREATE OR REPLACE FUNCTION MakeOrGetExercise (nethz varchar(32), lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE exer_id int;
@@ -144,6 +144,29 @@ RETURNS int AS $$
       RETURN exer_id;
   END; 
 $$ LANGUAGE plpgsql;
+
+-- MAKE OR GET RATING FIELD
+CREATE OR REPLACE FUNCTION MakeOrGetRatingField (tit varchar(128)) 
+RETURNS int AS $$
+  DECLARE rtf_id int;
+  BEGIN        
+      SELECT RatingField.RatingField_ID FROM RatingField WHERE RatingField.Title = tit INTO rtf_id;
+	  
+      IF rtf_id IS NOT NULL
+      THEN
+        UPDATE RatingField 
+        SET IsActive = True 
+        WHERE RatingField.RatingField_ID = rtf_id;
+      ELSE
+        INSERT INTO RatingField (RatingField_ID)
+        VALUES (tit)
+        RETURNING RatingField.RatingField_ID
+        INTO rtf_id;
+      END IF;      
+	  
+      RETURN rtf_id;
+  END; 
+$$ LANGUAGE plpgsql;
 																	 
 -- CLEAR EXERCISES
 CREATE OR REPLACE FUNCTION ClearExercises () 
@@ -167,7 +190,7 @@ RETURNS TABLE (
       WHERE EXISTS (SELECT * FROM Exercise 
                     WHERE Exercise.Lecture_ID = Lecture.Lecture_ID AND Exercise.IsActive = True);
                     
-      
+      Return;
   END; 
 $$ LANGUAGE plpgsql;    
 
@@ -182,7 +205,7 @@ RETURNS TABLE (
   )
   AS $$
   BEGIN        
-	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Name, Lecture.Lecture_ID, Lecture.Name 
+	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Nethz_Name, Lecture.Lecture_ID, Lecture.Name 
       FROM Exercise
       JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
       JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
@@ -203,7 +226,7 @@ RETURNS TABLE (
   )
   AS $$
   BEGIN        
-	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Name, Lecture.Lecture_ID, Lecture.Name 
+	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Nethz_Name, Lecture.Lecture_ID, Lecture.Name 
       FROM Exercise
       JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
       JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
@@ -227,7 +250,7 @@ RETURNS TABLE (
       JOIN Rating ON Rating.Exercise_ID = Exercise.Exercise_ID
       JOIN RatingField ON Rating.RatingField_ID = RatingField.RatingField_ID
       WHERE Exercise.Exercise_ID = exer_id AND RatingField.IsActive = TRUE
-      GROUP BY RatingField.RatingField_ID;
+      GROUP BY Exercise.Exercise_ID, RatingField.RatingField_ID;
   END; 
 $$ LANGUAGE plpgsql; 
 
@@ -244,11 +267,51 @@ RETURNS TABLE (
   )
   AS $$
   BEGIN        
-	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Name, Lecture.Lecture_ID, Lecture.Name 
+	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Nethz_Name, Lecture.Lecture_ID, Lecture.Name 
       FROM Exercise
       JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
       JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
       WHERE Exercise.IsActive = True AND Lecture.Lecture_ID = lect_id; 
   END; 
 $$ LANGUAGE plpgsql; 
+
+DROP FUNCTION IF EXISTS AddExerciseRating(int);
+
+-- GET LECTURE ASSISTANTS
+CREATE OR REPLACE FUNCTION AddExerciseRating (exec_id int, ratingFld_id int, usr_id int, rating int) 
+RETURNS void
+  AS $$
+  BEGIN        
+	  INSERT INTO Rating (Exercise_ID, RatingField_ID, User_ID, RatingValue)
+      VALUES (exec_id, ratingFld_id, usr_id, rating);
+  END; 
+$$ LANGUAGE plpgsql; 
+
+-- GET LECTURE ASSISTANTS
+CREATE OR REPLACE FUNCTION AddComment (exec_id int, usr_id int, titl varchar(64), txt varchar(1024)) 
+RETURNS int
+  AS $$
+  BEGIN        
+	  INSERT INTO Commentary (Exercise_ID, User_ID, Title, Text)
+      VALUES (exec_id, usr_id, titl, txt);
+  END; 
+$$ LANGUAGE plpgsql; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
