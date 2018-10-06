@@ -80,7 +80,7 @@ CREATE TABLE Attendee (
 
 DROP FUNCTION IF EXISTS MakeOrGetUser(varchar(32));
 
--- NOTIFY USER LOGIN
+-- MAKE OR GET USER
 CREATE OR REPLACE FUNCTION MakeOrGetUser (nethz varchar(32)) 
 RETURNS int AS $$
   DECLARE user_id int;
@@ -99,7 +99,7 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql;
 
--- NOTIFY USER LOGIN
+-- MAKE OR GET LECTURE
 CREATE OR REPLACE FUNCTION MakeOrGetLecture (lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE lect_id int;
@@ -118,7 +118,7 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql;
 
--- MAKE EXERCISE
+-- MAKE OR GET EXERCISE
 CREATE OR REPLACE FUNCTION MakeOrGetExercise (nethz varchar(32), lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE exer_id int;
@@ -142,6 +142,29 @@ RETURNS int AS $$
       END IF;      
 	  
       RETURN exer_id;
+  END; 
+$$ LANGUAGE plpgsql;
+
+-- MAKE OR GET RATING FIELD
+CREATE OR REPLACE FUNCTION MakeOrGetRatingField (tit varchar(128)) 
+RETURNS int AS $$
+  DECLARE rtf_id int;
+  BEGIN        
+      SELECT RatingField.RatingField_ID FROM RatingField WHERE RatingField.Title = tit INTO rtf_id;
+	  
+      IF rtf_id IS NOT NULL
+      THEN
+        UPDATE RatingField 
+        SET IsActive = True 
+        WHERE RatingField.RatingField_ID = rtf_id;
+      ELSE
+        INSERT INTO RatingField (RatingField_ID)
+        VALUES (tit)
+        RETURNING RatingField.RatingField_ID
+        INTO rtf_id;
+      END IF;      
+	  
+      RETURN rtf_id;
   END; 
 $$ LANGUAGE plpgsql;
 																	 
@@ -251,4 +274,34 @@ RETURNS TABLE (
       WHERE Exercise.IsActive = True AND Lecture.Lecture_ID = lect_id; 
   END; 
 $$ LANGUAGE plpgsql; 
+
+DROP FUNCTION IF EXISTS AddExerciseRating(int);
+
+-- GET LECTURE ASSISTANTS
+CREATE OR REPLACE FUNCTION AddExerciseRating (exec_id int, ratingFld_id int, usr_id int, rating int) 
+RETURNS void
+  AS $$
+  BEGIN        
+	  INSERT INTO Rating (Exercise_ID, RatingField_ID, User_ID, RatingValue)
+      VALUES (exec_id, ratingFld_id, usr_id, rating);
+  END; 
+$$ LANGUAGE plpgsql; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

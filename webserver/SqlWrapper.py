@@ -40,6 +40,19 @@ def MakeOrGetExercise (nethz, lecture_name, dbname, user, password, host, port):
         conn.close()
         return id
         
+"""
+title is limited to 128 characters
+"""       
+def MakeOrGetExercise (title, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT * FROM MakeOrGetRatingField(%s::varchar(128));", (title, )) 
+        id = cur.fetchone()[0]        
+        conn.commit()
+        cur.close()
+        conn.close()
+        return id
+        
 def ClearExercises (dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
