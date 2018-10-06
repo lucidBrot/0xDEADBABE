@@ -3,6 +3,8 @@ variables:
   VIS_CI_APP_NAME: 'team8'
   VIS_CI_DEPLOYMENT_SUBDOMAIN: 'team8'
   VIS_CI_ENABLE_POSTGRES: 'true'
+  VIS_CI_SERVIS_DEPENDENCIES: "people-api"
+  VIS_CI_SERVIS_PYTHON_OUT: "./webserver"
 
 stages:
   - build
@@ -14,6 +16,7 @@ build:
     - docker-runner
   stage: build
   script:
+    - do_servis_generate
     - do_default_build
   only:
     refs:
