@@ -68,7 +68,7 @@ CREATE TABLE Attendee (
 -- #### FUNCTIONS ####
 
 -- NOTIFY USER LOGIN
-CREATE OR REPLACE FUNCTION MakeOrGetUser (nethz varchar(32)) 
+CREATE FUNCTION MakeOrGetUser (nethz varchar(32)) 
 RETURNS int AS $$
   DECLARE user_id int;
   BEGIN      
@@ -87,7 +87,7 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql;
 
 -- NOTIFY USER LOGIN
-CREATE OR REPLACE FUNCTION MakeOrGetLecture (lecture_name varchar(128)) 
+CREATE FUNCTION MakeOrGetLecture (lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE lect_id int;
   BEGIN  
@@ -106,7 +106,7 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql;
 
 -- MAKE EXERCISE
-CREATE OR REPLACE FUNCTION MakeOrGetExercise (nethz varchar(32), lecture_name varchar(128)) 
+CREATE FUNCTION MakeOrGetExercise (nethz varchar(32), lecture_name varchar(128)) 
 RETURNS int AS $$
   DECLARE exer_id int;
   DECLARE user_id int;
@@ -133,10 +133,47 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql;
 																	 
 -- CLEAR EXERCISES
-CREATE OR REPLACE FUNCTION ClearExercises () 
+CREATE FUNCTION ClearExercises () 
 RETURNS void AS $$
   BEGIN        
 	  UPDATE Exercise SET IsActive = False;	  
       RETURN;
   END; 
-$$ LANGUAGE plpgsql;                                                                
+$$ LANGUAGE plpgsql;  
+
+-- GET ACTIVE LECTURES
+CREATE FUNCTION GetActiveLectures () 
+RETURNS TABLE (
+    Lecture_ID int,
+    Name varchar(128)
+  )
+  AS $$
+  BEGIN        
+	  RETURN QUERY SELECT Lecture.Lecture_ID, Lecture.Name 
+      FROM Lecture
+      WHERE EXISTS (SELECT * FROM Exercise 
+                    WHERE Exercise.Lecture_ID = Lecture.Lecture_ID AND Exercise.IsActive = True);
+                    
+      
+  END; 
+$$ LANGUAGE plpgsql;    
+
+-- GET ACTIVE EXERCISES
+CREATE FUNCTION GetActiveExercises () 
+RETURNS TABLE (
+    Exercise_ID int,
+    Assistant_ID int,
+    Assistant_Nethz varchar(32),
+    Lecture_ID int,
+    Lecture_Name varchar(128)
+  )
+  AS $$
+  BEGIN        
+	  RETURN QUERY SELECT Exercise.Exercise_ID, "User".User_ID, "User".Name, Lecture.Lecture_ID, Lecture.Name 
+      FROM Exercise
+      JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
+      JOIN Lecture ON Lecture.Lecture_ID = Exercise.Lecture_ID
+      WHERE Exercise.IsActive = True;    
+  END; 
+$$ LANGUAGE plpgsql;                                                              
+
