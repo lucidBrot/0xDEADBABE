@@ -2,7 +2,9 @@
 import os
 from flask import Flask
 from flask import request, send_from_directory, url_for
-from flask_sqlalchemy import SQLAlchemy, func
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
+import csv
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -18,7 +20,8 @@ FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}
 DB = SQLAlchemy(FLASK_SERVER)
 
 def main():
-    FLASK_SERVER.run('0.0.0.0', port=80)
+    #FLASK_SERVER.run('0.0.0.0', port=80)
+    parseCSV('./debug_inputs/inputs.csv')
     
 # Sample to receive GET request and argument /?name=asdf
 @FLASK_SERVER.route('/', methods=["GET"])
@@ -39,6 +42,13 @@ def helopost():
 # Sample to call Stored Procedures
 # def callStoredProcedure():
 #    data = DB.session.query(func.SCHEMA.FUNC_NAME()).all()
+
+def parseCSV(csvFile):
+    with open(csvFile, 'r') as f:
+        reader = csv.DictReader(f)
+        mylist = [line for line in reader]
+        print(mylist)
+
 
 if __name__ == '__main__':
     main()
