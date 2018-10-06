@@ -187,7 +187,9 @@ RETURNS TABLE (
       WHERE Exercise.IsActive = True;    
   END; 
 $$ LANGUAGE plpgsql; 
-                                                             
+                    
+DROP FUNCTION IF EXISTS GetExercise;
+                    
 -- GET EXERCISE
 CREATE OR REPLACE FUNCTION GetExercise (lect_id int, assi_id int) 
 RETURNS TABLE (
@@ -207,6 +209,8 @@ RETURNS TABLE (
   END; 
 $$ LANGUAGE plpgsql; 
 
+DROP FUNCTION IF EXISTS GetExerciseRatings;
+
 -- GET EXERCISE RATINGS
 CREATE OR REPLACE FUNCTION GetExerciseRatings (exer_id int) 
 RETURNS TABLE (
@@ -224,6 +228,8 @@ RETURNS TABLE (
       GROUP BY RatingField.RatingField_ID;
   END; 
 $$ LANGUAGE plpgsql; 
+
+DROP FUNCTION IF EXISTS GetLectureExercise;
 
 -- GET LECTURE ASSISTANTS
 CREATE OR REPLACE FUNCTION GetLectureExercises (lect_id int) 
