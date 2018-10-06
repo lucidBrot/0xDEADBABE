@@ -52,7 +52,7 @@ def loadDebugCSV():
     csvData = parseDebugCSV()
     # tell database about csv content
     problem = dbInitializeTeachingAssistants(csvData)
-    return "csvData: {}\r\n\r\nProblem:{}".format(str(csvData), problem)
+    return "csvData: {}\<br/>Problem:{}".format(str(csvData), str(problem))
 
 # CSV Logic: --------------------------------------------------------------
 
