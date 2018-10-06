@@ -24,6 +24,7 @@ DEBUG_VERSION = "abab"
 
 def main():
     initDatabase()
+    fillDatabase()
     FLASK_SERVER.config["SECRET_KEY"] = config.SECRET
     FLASK_SERVER.run('0.0.0.0', port=80)
 
@@ -168,6 +169,12 @@ def course():
 
 
 # CSV Logic: --------------------------------------------------------------
+
+def fillDatabase():
+    data = parseDebugCSV()
+    log = dbInitializeTeachingAssistants(data)
+    print(log)
+
 
 """
 return: a list of OrderedDictionaries with the keys config.CSV_TA_NETHZ and CSV_TA_NETHZ
