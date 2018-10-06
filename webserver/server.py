@@ -98,15 +98,15 @@ nethz: which user logged in
 @FLASK_SERVER.route('/userLogin', methods=["POST"])
 def userLogin():
     nethz = request.form.get('nethz')
-    redirect = '<script>window.location.replace("/courses.html");</script>'
-    retStr = "{}{} logged in... Tellling DB...<br/>".format(redirect,nethz)
+    retStr = "{} logged in... Tellling DB...<br/>".format(nethz)
     try:
         SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         session["nethz_cookie"] = nethz
         retStr += "done.<br/>"
     except Exception as e:
         retStr += "failed: {} <br/>".format(str(e))
-    return retStr
+#    return retStr
+    return redirect("/course.html", code=302)
 
 @FLASK_SERVER.route('/submitVotes', methods=["POST"]) #TODO: submit Votes from GUI
 def submitVotes():
@@ -139,7 +139,6 @@ def main_profile_template():
     # get Facts from database
     try:
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        # TODO: load attributes from database!
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         attributes = []
         for rating in ratings:
@@ -148,7 +147,7 @@ def main_profile_template():
             percentage = 10*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lecture_name, attributes=attributes, comments=comments)
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lecture_name, attributes=attributes, comments=comments, exercise_id=ex_id)
     except Exception as e:
         return "Exception! {}".format(str(e))
 
