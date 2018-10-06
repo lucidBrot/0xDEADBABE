@@ -23,6 +23,8 @@ DB = SQLAlchemy(FLASK_SERVER)
 def main():
     FLASK_SERVER.run('0.0.0.0', port=80)
     
+# Server Routes: ---------------------------------------------------------
+
 # Sample to receive GET request and argument /?name=asdf
 @FLASK_SERVER.route('/', methods=["GET"])
 def heloworld():
@@ -43,16 +45,32 @@ def helopost():
 # def callStoredProcedure():
 #    data = DB.session.query(func.SCHEMA.FUNC_NAME()).all()
 
+@FLASK_SERVER.route('/loadDebugCSV')
+def loadDebugCSV():
+    # parse CSV
+    csvData = parseDebugCSV()
+    # tell database about csv content
+    dbInitializeTeachingAssistants(csvData)
+    return "csvData: {}".format(str(csvData))
+
+# CSV Logic: --------------------------------------------------------------
+
+"""
+return: a list of OrderedDictionaries with the keys config.CSV_TA_NETHZ and CSV_TA_NETHZ
+"""
 def parseCSV(csvFile):
     with open(csvFile, 'r') as f:
         reader = csv.DictReader(f)
         mylist = [line for line in reader]
         print(mylist)
         # use config.CSV_TA_NETHZ and config.CSV_LECTURE_NAME
-        #TODO send data to database
+    return mylist
 
 def parseDebugCSV():
-    parseCSV('./debug_inputs/inputs.csv')
+    return parseCSV('./debug_inputs/inputs.csv')
+
+def dbInitializeTeachingAssistants(csvData):
+    return
 
 
 if __name__ == '__main__':
