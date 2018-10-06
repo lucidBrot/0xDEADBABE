@@ -127,7 +127,12 @@ def main_profile_template():
     comments = []
     return render_template('main_profile.html',TA_name=TA_name, lecture=lecture, attributes=attributes, comments=comments)
 
+@FLASK_SERVER.route('/courses', methods=["GET"])
+def courses():
+    course_ID = request.args.get('id', default = '0', type = int)
+    TA = {"name": "Christian Hanspeter von-Günther Knieling", "id":"1243", "nethz":"lmao"}
 
+    return render_template('course.html',
 
 
 # CSV Logic: --------------------------------------------------------------
