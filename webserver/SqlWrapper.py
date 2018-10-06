@@ -18,3 +18,15 @@ def MakeAssistant (assistant_nethz, dbname, user, password, host, port):
         conn.commit()
         cur.close()
         conn.close()
+
+
+"""
+Initialize Database
+"""
+def InitializeDatabase (initSqlFile, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute(initSqlFile)       
+        conn.commit()
+        cur.close()
+        conn.close()
