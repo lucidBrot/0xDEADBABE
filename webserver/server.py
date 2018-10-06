@@ -107,7 +107,13 @@ def userLogin():
 
 @FLASK_SERVER.route('/main_profile.html')
 def main_profile_template():
-    return flask.render_template('main_profile.jinja')
+    return flask.render_template('main_profile.html')
+
+@FLASK_SERVER.route('/TA_profile.html')
+def main_profile_template():
+    return flask.render_template('TA_profile.html')
+
+
 
 
 # CSV Logic: --------------------------------------------------------------
