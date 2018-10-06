@@ -164,7 +164,7 @@ Gets the comments for a specific exercise
 def GetExerciseComments (exercise_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
-        cur.execute("SELECT * FROM GetExerciseComments(%s);", (exercise_id,)) 
+        cur.execute("SELECT * FROM GetExerciseComments(%s::int);", (exercise_id,)) 
         ratings = cur.fetchall()
         conn.commit()
         cur.close()
