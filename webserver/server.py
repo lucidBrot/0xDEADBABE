@@ -7,7 +7,6 @@ from sqlalchemy.sql import func
 import csv
 import config # diverse configurable variables
 import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
-import time
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -21,6 +20,7 @@ DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
 DB = SQLAlchemy(FLASK_SERVER)
+DEBUG_VERSION = "a"
 
 def main():
     FLASK_SERVER.run('0.0.0.0', port=80)
@@ -53,9 +53,9 @@ def loadDebugCSV():
     csvData = parseDebugCSV()
     # tell database about csv content
     problem = dbInitializeTeachingAssistants(csvData)
-    # add timestamp
-    millis = int(round(time.time()*1000))
-    return "{}<br/><br/>csvData: {}\<br/><br/>Problem:{}".format(millis, str(csvData), str(problem))
+    # add version
+    version = DEBUG_VERSION
+    return "{}<br/><br/>csvData: {}\<br/><br/>Problem:{}".format(version, str(csvData), str(problem))
 
 # CSV Logic: --------------------------------------------------------------
 
