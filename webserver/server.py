@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 import csv
 import config # diverse configurable variables
+import SqlWrapper # jasper's sql functions for communication with the DB without sqlAlchemy
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -70,7 +71,9 @@ def parseDebugCSV():
     return parseCSV('./debug_inputs/inputs.csv')
 
 def dbInitializeTeachingAssistants(csvData):
-    return
+    # TODO: do for all data
+    SqlWrapper.MakeAssistant(csvData[0][config.CSV_TA_NETHZ],
+            DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
 
 
 if __name__ == '__main__':
