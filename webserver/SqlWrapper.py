@@ -84,10 +84,25 @@ def GetExercise (exercise_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
         cur.execute("SELECT GetExercise(%s);", (exercise_id,)) 
-        id = cur.fetchone()
+        exercise = cur.fetchone()
         conn.commit()
         cur.close()
         conn.close()
+        return exercise
+        
+"""
+Gets the ratings for a specific exercise
+(Exercise_ID, Rating_Title, Rating_Value)
+"""              
+def GetExerciseRatings (exercise_id, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT GetExerciseRatings(%s);", (exercise_id,)) 
+        ratings = cur.fetchmany()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return ratings
 
 """
 Initialize Database
