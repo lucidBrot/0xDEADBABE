@@ -20,7 +20,7 @@ DB_USER = os.environ.get("RUNTIME_POSTGRES_DB_USER")
 DB_PW = os.environ.get("RUNTIME_POSTGRES_DB_PW")
 FLASK_SERVER.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(DB_USER, DB_PW, DB_URL, DB_PORT, DB_NAME)
 DB = SQLAlchemy(FLASK_SERVER)
-DEBUG_VERSION = "c"
+DEBUG_VERSION = "d"
 
 def main():
     FLASK_SERVER.run('0.0.0.0', port=80)
@@ -77,7 +77,7 @@ def dbInitializeTeachingAssistants(csvData):
     returnString = ""
     # TODO: do for all data
     try:
-        returnString += "{0},{1},{2},{3},{4},{5}".format(csvData[0][config.CSV_TA_NETHZ], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        returnString += "{0},{1},{2},{3},{4},{5} <br/>".format(csvData[0][config.CSV_TA_NETHZ], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         SqlWrapper.MakeAssistant(csvData[0][config.CSV_TA_NETHZ],
             DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e: returnString+=str(e)
