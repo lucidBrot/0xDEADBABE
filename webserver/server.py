@@ -109,7 +109,7 @@ def userLogin():
 #    return retStr
     return redirect("/courses.html", code=302)
 
-@FLASK_SERVER.route('/submitRatings', methods=["POST"]) #TODO: submit Votes from GUI
+@FLASK_SERVER.route('/submitRatings', methods=["POST"])
 def submitVotes():
     ratingsDictListJSON = request.form.get('ratings')
     # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
@@ -149,8 +149,7 @@ def main_profile_template():
         ex_id = None
         for rating in ratings:
             (ex_id, title, value) = rating
-            # percentage = 10*points
-            percentage = 10*value
+            percentage = config.RATING_SCALE_FACTOR*value
             attributes.append({"title" : title, "percentage" : percentage})
     
         # load comments from database
@@ -165,7 +164,6 @@ def main_profile_template():
         return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_id, attributes=attributes, comments=comments, exercise_id=ex_id, nethzName=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
-    # TODO: ability to like comment
 
 # exactly same thing again, but without comments
 @FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
