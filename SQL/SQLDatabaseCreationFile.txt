@@ -22,7 +22,8 @@ CREATE UNIQUE INDEX UIX_LectureName ON Lecture (Name);
 -- USER
 CREATE TABLE "User" (
 	User_ID serial PRIMARY KEY,
-	Nethz_Name varchar(32) NOT NULL	
+	Nethz_Name varchar(32) NOT NULL,
+    Token UUID UNIQUE NOT NULL DEFAULT (md5(random()::text || clock_timestamp()::text)::uuid)
 );
 CREATE UNIQUE INDEX UIX_User ON "User" (Nethz_Name);
 
@@ -165,6 +166,38 @@ RETURNS int AS $$
       END IF;      
 	  
       RETURN rtf_id;
+  END; 
+$$ LANGUAGE plpgsql;
+
+-- GET USER TOKEN
+CREATE OR REPLACE FUNCTION GetUserToken (usr_id int)
+RETURNS uuid AS $$
+  DECLARE usr_token int;
+  BEGIN        
+      SELECT "User".Token FROM "User" WHERE "User".User_ID = usr_id INTO usr_token;
+	  
+      IF usr_token IS NULL
+      THEN
+        Raise 'The user with the given id doesn''t exist.';
+      END IF;
+	  
+      RETURN usr_token;
+  END; 
+$$ LANGUAGE plpgsql;
+
+-- GET USER BY TOKEN
+CREATE OR REPLACE FUNCTION GetUserByToken (tkn uuid)
+RETURNS int AS $$
+  DECLARE usr_id int;
+  BEGIN        
+      SELECT "User".User_ID FROM "User" WHERE "User".Token = tkn INTO usr_id;
+	  
+      IF usr_id IS NULL
+      THEN
+        Raise 'There is no user assigned to the given token.';
+      END IF;
+	  
+      RETURN usr_id;
   END; 
 $$ LANGUAGE plpgsql;
 																	 
