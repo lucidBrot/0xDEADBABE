@@ -156,7 +156,8 @@ def main_profile_template():
         # load comments from database
         commentsList = SqlWrapper.GetExerciseComments(ex_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         comments=[]
-        for comment in commentsList:
+        for comment in commentsList: 
+            like_count_c = -1 #JASPER
             (_, user_id, user_nethz, creation_date, like_count_c, title_c, text_c) = comment
             comments.append({
                 "title": title_c, "text": text_C, "like_count":like_count_c, "author":user_nethz
