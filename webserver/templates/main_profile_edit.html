@@ -128,7 +128,7 @@ nethzName
             var chosenElem = 3;
             $(element).children().each(function (index_child, element_child) {
                 if ($(element_child).hasClass('active')) {
-                    chosenElem = index_child;
+                    chosenElem = index_child + 1;
                     return;
                 }
             })
@@ -170,7 +170,7 @@ function onCommentSubmit(){
         <div class="col-sm">
 
             <h2>
-                <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Save Feedback</a>
+                <a href="#" onclick="onRatingSelected()" class="btn btn-primary float-md-right" style="margin:5px">Save Feedback</a>
             </h2>
             <div class="card-rows">
                 <div class="card w-100">
