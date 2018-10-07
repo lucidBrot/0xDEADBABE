@@ -326,7 +326,7 @@ DROP FUNCTION IF EXISTS AddComment(int, int, varchar(64), varchar(1024));
 
 -- GET LECTURE ASSISTANTS
 CREATE OR REPLACE FUNCTION AddComment (exec_id int, usr_id int, titl varchar(64), txt varchar(1024)) 
-RETURNS int
+RETURNS void
   AS $$
   BEGIN        
 	  INSERT INTO Commentary (Exercise_ID, User_ID, Title, Text)
@@ -334,6 +334,34 @@ RETURNS int
   END; 
 $$ LANGUAGE plpgsql; 
 
+-- GET LECTURE ASSISTANTS
+CREATE OR REPLACE FUNCTION ToggleUpvoteComment (com_id int, usr_id int) 
+RETURNS boolean
+  AS $$
+  DECLARE comLike_id int;
+  BEGIN        
+      IF NOT EXISTS (SELECT * FROM Commentary WHERE Commentary.Commentary_ID = com_id)
+      THEN
+        RAISE 'No comment has the given id.';
+      END IF;
+      
+      SELECT CommentaryLike.CommentaryLike_ID 
+      FROM CommentaryLike 
+      WHERE CommentaryLike.Commentary_ID = com_id AND CommentaryLike.User_ID = usr_id
+      INTO comLike_id;
+      
+      IF comLike_id is NULL
+      THEN
+        INSERT INTO CommentaryLike (Commentary_ID, User_ID)
+        VALUES (com_id, usr_id);
+        RETURN True;
+      ELSE 
+        DELETE FROM CommentaryLike
+        WHERE CommentaryLike.CommentaryLike_ID = comLike_id;
+        RETURN False;
+      END IF;
+  END; 
+$$ LANGUAGE plpgsql; 
 
 
 

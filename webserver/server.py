@@ -10,6 +10,7 @@ from flask import render_template
 from flask import session, redirect
 import random
 import sys
+import json
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -139,8 +140,8 @@ def submitComment():
     msg_title = request.form.get('message_title')
     ex_ID = request.form.get('exercise_id')
     try:
-        user_id = SqlWrapper.MakeOrGetUser (nethz_name, DB_NAME, DB_USER, DB_PASS, DB_URL, DB_PORT)
-        SqlWrapper.AddComment(ex_ID, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PASS, DB_PORT)
+        user_id = SqlWrapper.MakeOrGetUser (nethz_name, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        SqlWrapper.AddComment(ex_ID, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e:
         return "Exception: {}".format(str(e))
 

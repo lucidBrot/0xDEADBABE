@@ -80,7 +80,7 @@ Adds a new comment from the given user to the given exercise with title and text
 def AddComment (exercise_id, user_id, title, text, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()
-        cur.execute("SELECT * FROM AddComment(%s::int, %s::int, %s::varchar(64), %s::varchar(1024));", (exec_id, usr_id, title, text))
+        cur.execute("SELECT * FROM AddComment(%s::int, %s::int, %s::varchar(64), %s::varchar(1024));", (exercise_id, user_id, title, text))
         id = cur.fetchone()
         conn.commit()
         cur.close()

@@ -190,26 +190,42 @@ nethzName
                 </ul>
             </div>
         </div>
-    </div>
-    <div class="col-sm">
-        <h2>
-            Comment
-        </h2>
-        <div class="card-rows">
-            <div class="card" style="margin: 10px">
-                <div class="card-body">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Title" aria-label="Username"
-                               aria-describedby="basic-addon1">
+<script>
+function onCommentSubmit(){
+	var data = new FormData()
+	data.append('message', document.getElementById('commentMsg').value)
+	data.append('message_title', document.getElementById('commentTitle').value)
+	data.append('exercise_id', {{exercise_id}})
+
+	fetch('/submitComment', {
+	  method: 'POST',
+	  body: data
+	})
+	  .then(function(response) {
+		return console.log(response.text());
+	  })
+
+}
+</script>
+        <div class="col-sm">
+            <h2>
+                Comment
+            </h2>
+            <div class="card-rows">
+                <div class="card" style="margin: 10px">
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="text" id="commentTitle" class="form-control" placeholder="Title" aria-label="Username"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+                            <textarea id="commentMsg" class="form-control" aria-label="With textarea"></textarea>
+                        </div>
+                        <footer class="blockquote-footer">{{nethzName}}</footer>
                     </div>
-                    <div class="input-group">
-                        <textarea class="form-control" aria-label="With textarea"></textarea>
-                    </div>
-                    <footer class="blockquote-footer">{{nethzName}}</footer>
-                </div>
-                <div class="container-fluid">
-                    <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Save
-                    </a>
+                    <div class="container-fluid">
+                        <a href="#" onclick="onCommentSubmit()" class="btn btn-primary float-md-right" style="margin:5px">Save
+                        </a>        
                 </div>
             </div>
         </div>
