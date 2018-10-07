@@ -156,18 +156,19 @@ def userLogin():
 @FLASK_SERVER.route('/submitRatings', methods=["POST"])
 def submitRatings():
     ratingsDictListJSON = request.form.get('ratings')
-    FLASK_SERVER.logger.warning("RatingsDictListJSON: "+str(ratingsDictListJSON))
     # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
     ratingsDictList = json.loads(ratingsDictListJSON)
-    ratingsList = map(lambda dictionary: (dictionary['exercise_id'],
+    ratingsList = list(map(lambda dictionary: (dictionary['exercise_id'],
                                           dictionary['rating_title'],
-                                          dictionary['rating_value']), ratingsDictList)
-    FLASK_SERVER.logger.warning("ratings list: "+str(list(ratingsList)))
-
+                                          dictionary['rating_value']), ratingsDictList))
+    FLASK_SERVER.logger.warning("ratings list: "+str(ratingsList))
+    #
     user_nethz = session["nethz_cookie"]
     retStr = "Got ratings: {}".format(str(ratingsList))
     try:
-        SqlWrapper.AddExerciseRatingsFromTitles(ratingsList, user_nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        user_id = SqlWrapper.MakeOrGetUser(user_nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        FLASK_SERVER.logger.warning("USER ID: " + str(user_id))
+        SqlWrapper.AddExerciseRatingsFromTitles(ratingsList, user_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         retStr+="<br/>...done."
     except Exception as e:
         retStr += "<br/>...failed: {} <br/>".format(str(e))
