@@ -4,6 +4,8 @@ TA_name
 lecture
 attributes -> attribute.title
 nethzName
+course_id
+TA_id
 #}
 <html>
 
@@ -177,10 +179,6 @@ function onCommentSubmit(){
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm">
-
-            <h2>
-                <a href="#" onclick="onRatingSelected()" class="btn btn-primary float-md-right" style="margin:5px">Save Feedback</a>
-            </h2>
             <div class="card-rows">
                 <div class="card w-100">
                     <ul class="list-group  list-group-flush">
@@ -214,16 +212,21 @@ function onCommentSubmit(){
                 </li>
                 {% endfor %}
                 </ul>
+                <h2>
+                    <a href="#" onclick="onRatingSelected()" class="btn btn-primary float-md-right" style="margin:5px">Save Rating</a>
+                </h2>
             </div>
         </div>
     </div>
     <div class="col-sm">
-            <h2>
-                Comment
-            </h2>
+        <h2>
+            <a href="/main_profile.html?course_id={{course_id}}&TA_id={{TA_id}}" class="btn btn-primary float-md-right" style="margin:5px">back</a>
+        </h2>
             <div class="card-rows">
                 <div class="card" style="margin: 10px">
                     <div class="card-body">
+                        <h5 class="card-title">Comment</h5>
+
                         <div class="input-group mb-3">
                             <input type="text" id="commentTitle" class="form-control" placeholder="Title" aria-label="Username"
                                    aria-describedby="basic-addon1">
@@ -234,7 +237,7 @@ function onCommentSubmit(){
                         <footer class="blockquote-footer">{{nethzName}}</footer>
                     </div>
                     <div class="container-fluid">
-                        <a href="#" onclick="onCommentSubmit()" class="btn btn-primary float-md-right" style="margin:5px">Save
+                        <a href="#" onclick="onCommentSubmit()" class="btn btn-primary float-md-right" style="margin:5px">Save Comment
                         </a>
                 </div>
             </div>
