@@ -171,7 +171,11 @@ function onCommentSubmit(){
 
 }
 </script>
-<p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }} </p>
+<div class="row w-100 align-items-center">
+    <p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }} </p>
+    <a href="/main_profile.html?course_id={{course_id}}&TA_id={{TA_id}}" class="btn btn-primary float-md-right">back</a>
+</div>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -216,11 +220,8 @@ function onCommentSubmit(){
         </div>
     </div>
     <div class="col-sm">
-        <h2>
-            <a href="/main_profile.html?course_id={{course_id}}&TA_id={{TA_id}}" class="btn btn-primary float-md-right" style="margin:5px">back</a>
-        </h2>
             <div class="card-rows">
-                <div class="card" style="margin: 10px">
+                <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Comment</h5>
 
