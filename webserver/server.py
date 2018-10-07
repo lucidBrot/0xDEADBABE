@@ -140,7 +140,7 @@ def submitComment():
     ex_ID = request.form.get('exercise_id')
     try:
         user_id = SqlWrapper.MakeOrGetUser (nethz_name, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        SqlWrapper.AddComment(ex_ID, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PW, DB_PORT)
+        SqlWrapper.AddComment(ex_ID, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e:
         return "Exception: {}".format(str(e))
 
