@@ -176,7 +176,7 @@ def main_profile_template():
 
         nethz = session["nethz_cookie"]
         usr_id = SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-            
+
         # load comments from database
         commentsList = SqlWrapper.GetExerciseComments(ex_ID, usr_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         comments=[]
@@ -187,14 +187,14 @@ def main_profile_template():
                 "title": title_c, "text": text_c, "like_count":like_count_c, "user_liked":user_liked, "author":user_nethz
                 })
         return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes,
-            comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"], ta_id=TA_id, course_id=course_id)
+            comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"], TA_id=TA_id, course_id=course_id)
     except Exception as e:
         return "Exception! {}".format(str(e))
 
 # exactly same thing again, but without comments
 @FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
 def main_profile_edit_template():
-    TA_id = request.args.get('ta_id', default=0, type = int)
+    TA_id = request.args.get('TA_id', default=0, type = int)
     course_id = request.args.get('course_id', default=0, type=int)
     # get Facts from database
     try:
@@ -218,7 +218,7 @@ def course():
 #    (ex_ID, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     # list of TA dicts: id, nethz
-    TAlist = [{'id': ta_id, 'nethz': ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
+    TAlist = [{'id': TA_id, 'nethz': ta_nethz} for _, TA_id, ta_nethz, __, name, in resultlist]
 
     # Setting the lecture name. If resultlist is empty for some reason, this is the default we use for now
     lec_name = "Empty lecture"
