@@ -218,7 +218,7 @@ def main_profile_template():
             like_count_c = -1 #JASPER
             (_, user_id, nethz, creation_date, like_count_c, user_liked, title_c, text_c) = comment
             comments.append({
-                "title": title_c, "text": text_c, "like_count":like_count_c, "user_liked":user_liked, "author":user_nethz
+                "title": title_c, "text": text_c, "like_count":like_count_c, "user_liked":user_liked, "author":nethz
                 })
         return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes,
             comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"], TA_id=TA_id, course_id=course_id)
