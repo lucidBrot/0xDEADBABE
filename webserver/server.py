@@ -120,7 +120,7 @@ def userLogin():
 @FLASK_SERVER.route('/submitRatings', methods=["POST"])
 def submitRatings():
     ratingsDictListJSON = request.form.get('ratings')
-    print("RatingsDictListJSON: "+str(ratingsDictListJSON)
+    print("RatingsDictListJSON: "+str(ratingsDictListJSON))
     # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
     ratingsDictList = json.loads(ratingsDictListJSON)
     ratingsList = ratingsDictList.map(lambda dictionary: tuple(dictionary.values()))
