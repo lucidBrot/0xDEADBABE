@@ -144,6 +144,7 @@ def submitComment():
         SqlWrapper.AddComment(ex_ID, user_id, msg_title, msg, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e:
         return "Exception: {}".format(str(e))
+    return "success."
 
 # Dynamic Templates: ------------------------------------------------------
 
