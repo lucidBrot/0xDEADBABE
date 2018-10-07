@@ -145,6 +145,24 @@ nethzName
         })
     }
 </script>
+
+<script>
+function onCommentSubmit(){
+	var data = new FormData()
+	data.append('message', document.getElementById('commentMsg').value)
+	data.append('message_title', document.getElementById('commentTitle').value)
+	data.append('exercise_id', {{exercise_id}})
+
+	fetch('/submitComment', {
+	  method: 'POST',
+	  body: data
+	})
+	  .then(function(response) {
+		return console.log(response.text());
+	  })
+
+}
+</script>
 <p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }} </p>
 
 <div class="container-fluid">
@@ -152,7 +170,6 @@ nethzName
         <div class="col-sm">
 
             <h2>
-
                 <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Save Feedback</a>
             </h2>
             <div class="card-rows">
@@ -190,24 +207,8 @@ nethzName
                 </ul>
             </div>
         </div>
-<script>
-function onCommentSubmit(){
-	var data = new FormData()
-	data.append('message', document.getElementById('commentMsg').value)
-	data.append('message_title', document.getElementById('commentTitle').value)
-	data.append('exercise_id', {{exercise_id}})
-
-	fetch('/submitComment', {
-	  method: 'POST',
-	  body: data
-	})
-	  .then(function(response) {
-		return console.log(response.text());
-	  })
-
-}
-</script>
-        <div class="col-sm">
+    </div>
+    <div class="col-sm">
             <h2>
                 Comment
             </h2>
@@ -225,7 +226,7 @@ function onCommentSubmit(){
                     </div>
                     <div class="container-fluid">
                         <a href="#" onclick="onCommentSubmit()" class="btn btn-primary float-md-right" style="margin:5px">Save
-                        </a>        
+                        </a>
                 </div>
             </div>
         </div>
