@@ -9,6 +9,7 @@ from io import StringIO
 from flask import render_template
 from flask import session, redirect
 import random
+import sys
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -42,6 +43,7 @@ def initDatabase():
         print("Successfully initialzed")
     except Exception as e:
         print( "Init of DB Failed!<br/><br/>{}".format(str(e)))
+        print("Line: {}".format(sys.exc_info()[-1].tb_lineno))
 
     
 # Server Routes: ---------------------------------------------------------
@@ -162,6 +164,7 @@ def main_profile_template():
     try:
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT) or (None, None, None, None, None)
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        ratings.append((23, "Swag", 4))
         attributes = []
         for rating in ratings:
             (_, title, value) = rating
@@ -225,8 +228,6 @@ def fillDatabase():
     # Reusing the functions from Eric
     # Filling the database with exercises also adds the TAs and lectures
     data = parseDebugCSV()
-    print("DATA DATA DATA")
-    print(data)
     log = dbInitializeTeachingAssistants(data)
     print(log)
 
@@ -235,23 +236,28 @@ def fillDatabase():
     exercise_ids = [SqlWrapper.MakeOrGetExercise(line['ta_nethz'], line['lecture_name'], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
                         for line in data]
     fake_reviewers_nethz = ["alibaba", "unclebens", "suntzu"]
+    fake_reviewers_ids = []
     rating_titles = ["Speech Clarity", "Quality of Exercises", "Quality of Theory"]
+    rating_title_ids = []
 
+    for nethz in fake_reviewers_nethz:
+        reviewer_id = SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        fake_reviewers_ids.append(reviewer_id)
     for title in rating_titles:
-        try:
-            SqlWrapper.MakeOrGetRatingField(title, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        except Exception as e:
-            print("Exception! {}".format(str(e)))
+        title_id = SqlWrapper.MakeOrGetRatingField(title, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        rating_title_ids.append(title_id)
 
+    ratings = []
     for ex_id in exercise_ids:
-        for title in rating_titles:
-            for nethz in fake_reviewers_nethz:
-                value = random.randint(1,5)
-                rating_tuple = (ex_id, title, value)
-                try:
-                    SqlWrapper.AddExerciseRatings(rating_tuple, nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-                except Exception as e:
-                    print("Exception! {}".format(str(e)))
+        for title_id in rating_title_ids:
+            value = random.randint(1,5)
+            ratings.append((ex_id, title_id, value))
+    try:
+        for reviewer_id in fake_reviewers_ids:
+            SqlWrapper.AddExerciseRatings(ratings, reviewer_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+    except Exception as e:
+        print("Exception! {}".format(str(e)))
+        print("Line: {}".format(sys.exc_info()[-1].tb_lineno))
     
 
 
