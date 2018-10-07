@@ -69,57 +69,74 @@ nethzName
 </nav>
 <!--
 <div id="course-card-deck" class="card-deck">"
-    <div class="card flex-row flex-wrap">
-        <div class="card-header border-0">
-            <img src="https://static.vis.ethz.ch/favicon/viscon/apple-touch-icon.png" alt="">
-        </div>
-        <div class="card-block px-2">
-            <h4 class="card-title">Title</h4>
-            <p class="card-text">Description</p>
-            <a href="#" class="btn btn-primary">BUTTON</a>
-        </div>
-        <div class="w-100"></div>
-    </div>
+  <div class="card flex-row flex-wrap">
+      <div class="card-header border-0">
+          <img src="https://static.vis.ethz.ch/favicon/viscon/apple-touch-icon.png" alt="">
+      </div>
+      <div class="card-block px-2">
+          <h4 class="card-title">Title</h4>
+          <p class="card-text">Description</p>
+          <a href="#" class="btn btn-primary">BUTTON</a>
+      </div>
+      <div class="w-100"></div>
+  </div>
 </div>
 
 <div class="card w-75">
-    <div class="card-body">
-        <h5 class="card-title">Course Name</h5>
-        <p class="card-text">additional information</p>
-    </div>
+  <div class="card-body">
+      <h5 class="card-title">Course Name</h5>
+      <p class="card-text">additional information</p>
+  </div>
 </div>
-        <div class="card w-75">
-            <div class="row no-gutters">
-                <div class="col-auto">
-                    <img src="https://static.vis.ethz.ch/favicon/viscon/apple-touch-icon.png" alt="" class="rounded">
-                </div>
-                <div class="col">
-                    <div class="card-block px-2">
-                        <h4 class="card-title">Title</h4>
-                        <p class="card-text">Description</p>
-                        <a href="#" class="btn btn-primary">BUTTON</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div class="card w-75">
+          <div class="row no-gutters">
+              <div class="col-auto">
+                  <img src="https://static.vis.ethz.ch/favicon/viscon/apple-touch-icon.png" alt="" class="rounded">
+              </div>
+              <div class="col">
+                  <div class="card-block px-2">
+                      <h4 class="card-title">Title</h4>
+                      <p class="card-text">Description</p>
+                      <a href="#" class="btn btn-primary">BUTTON</a>
+                  </div>
+              </div>
+          </div>
+      </div>
 -->
 <script>
     <!-- Used for sending rating selection -->
     var EXERCISE_ID = {{exercise_id}};
+    const getCircularReplacer = () => {
+        const seen = new WeakSet();
+        return (key, value) => {
+            if (typeof value === "object" && value !== null) {
+                if (seen.has(value)) {
+                    return;
+                }
+                seen.add(value);
+            }
+            return value;
+        };
+    };
 
     function onRatingSelected() {
         // send a list of tuples of (exercise_id, rating_title, rating_value)
         // to '/submitRatings'
-        data = '['
+        data = [];
         $('div[aria-label="attribute-btn-group"]').each(function (index, element) {
             currRatingTitle = $(element).attr('name');
-            $(element).for
-            data = data + '{"exercise_id" :' + EXERCISE_ID + ', "rating_title" : ' + currRatingTitle + ', "rating_value" : ' + currRatingValue + ' }';
+            var chosenElem = 3;
+            $(element).children().each(function (index_child, element_child) {
+                if ($(element_child).hasClass('active')) {
+                    chosenElem = index_child;
+                    return;
+                }
+            })
+            data.push({exercise_id: EXERCISE_ID, rating_title: currRatingTitle, rating_value: chosenElem});
 
         });
-        data = data + '}]'
-        '[{"exercise_id" :' + EXERCISE_ID + ', "rating_title" : ' + currRatingTitle + ', "rating_value" : ' + currRatingValue + ' },{"name" : "Abhinandan", "age" : "20"}]';
-        fetch('/setCSV', {
+        jsonFile = JSON.stringify(data, getCircularReplacer());
+        fetch('/submitRatings', {
             method: 'POST',
             body: jsonFile
         }).then(function (response) {
@@ -138,68 +155,66 @@ nethzName
 
                 <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Save Feedback</a>
             </h2>
-
-                <div class="w-100">
+            <div class="card-rows">
+                <div class="card w-100">
                     <ul class="list-group  list-group-flush">
                         {% for attribute in attributes %}
                         <li class="list-group-item">
                             <h5 class="text-center">{{ attribute["title"] }}</h5>
                             <div class="btn-group btn-group-toggle btn-group-justified d-flex" data-toggle="buttons"
-                                 role="group"
-                                 name="{{ attribute["title"] }}"
-                                 aria-label="attribute-btn-group">
-                                <label class="btn btn-outline-secondary w-100" name="option1" >
-                                    <input class="w-20" type="radio" autocomplete="off"> --
-                                </label>
-                                <label class="btn btn-outline-secondary w-100" name="option2">
-                                    <input class="w-20" type="radio" autocomplete="off"> -
-                                </label>
-                                <label class="btn btn-outline-secondary active w-100" name="option3">
-                                    <input class="w-20" type="radio" autocomplete="off" checked> ~
-                                </label>
-                                <label class="btn btn-outline-secondary w-100" name="option4">
-                                    <input class="w-20" type="radio" autocomplete="off"> +
-                                </label>
-                                <label class="btn btn-outline-secondary w-100" name="option5">
-                                    <input class="w-20" type="radio" autocomplete="off"> ++
-                                </label>
-                            </div>
-                            <div>
-                                <p class="float-left">strongly disagree</p>
-                                <p class="float-right">strongly agree</p>
-                            </div>
-
-
-                        </li>
-                        {% endfor %}
-                    </ul>
+                                 role="group" name="{{ attribute["title"] }}" aria-label="attribute-btn-group">
+                            <label class="btn btn-outline-secondary w-100" name="option1">
+                                <input class="w-20" type="radio" autocomplete="off"> --
+                            </label>
+                            <label class="btn btn-outline-secondary w-100" name="option2">
+                                <input class="w-20" type="radio" autocomplete="off"> -
+                            </label>
+                            <label class="btn btn-outline-secondary active w-100" name="option3">
+                                <input class="w-20" type="radio" autocomplete="off" checked> ~
+                            </label>
+                            <label class="btn btn-outline-secondary w-100" name="option4">
+                                <input class="w-20" type="radio" autocomplete="off"> +
+                            </label>
+                            <label class="btn btn-outline-secondary w-100" name="option5">
+                                <input class="w-20" type="radio" autocomplete="off"> ++
+                            </label>
+                </div>
+                <div>
+                    <p class="float-left">strongly disagree</p>
+                    <p class="float-right">strongly agree</p>
                 </div>
 
+
+                </li>
+                {% endfor %}
+                </ul>
+            </div>
         </div>
-        <div class="col-sm">
-            <h2>
-                Comment
-            </h2>
-            <div class="card-rows">
-                <div class="card" style="margin: 10px">
-                    <div class="card-body">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Title" aria-label="Username"
-                                   aria-describedby="basic-addon1">
-                        </div>
-                        <div class="input-group">
-                            <textarea class="form-control" aria-label="With textarea"></textarea>
-                        </div>
-                        <footer class="blockquote-footer">{{nethzName}}</footer>
+    </div>
+    <div class="col-sm">
+        <h2>
+            Comment
+        </h2>
+        <div class="card-rows">
+            <div class="card" style="margin: 10px">
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Title" aria-label="Username"
+                               aria-describedby="basic-addon1">
                     </div>
-                    <div class="container-fluid">
-                        <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Save
-                        </a>
+                    <div class="input-group">
+                        <textarea class="form-control" aria-label="With textarea"></textarea>
                     </div>
+                    <footer class="blockquote-footer">{{nethzName}}</footer>
+                </div>
+                <div class="container-fluid">
+                    <a href="#" class="btn btn-primary float-md-right" style="margin:5px">Save
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 </div>
 
