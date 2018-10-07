@@ -62,7 +62,7 @@ def ClearExercises (dbname, user, password, host, port):
         conn.close()
 
 """
-Takes a list of triples (exercise_id, rating_title, rating_value)
+Takes a list of triples (exercise_id, ratingField_id, rating_value)
 """
 def AddExerciseRatings (ratings_list, user_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
@@ -73,6 +73,20 @@ def AddExerciseRatings (ratings_list, user_id, dbname, user, password, host, por
         conn.commit()
         cur.close()
         conn.close()
+
+"""
+Takes a list of triples (exercise_id, rating_title, rating_value)
+Gets field id automatically
+"""
+def AddExerciseRatingsFromTitles (ratings_list, user_id, dbname, user, password, host, port):
+    conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+    cur = conn.cursor()
+    for (exercise_id, rating_title, rating_value) in ratings_list:
+       field_id = MakeOrGetRatingField(rating_title, dbname, user, password, host, port)
+       cur.execute("DO $$ BEGIN PERFORM AddExerciseRating(%s, %s, %s, %s); END; $$;",(exercise_id, field_id, user_id, rating_value))
+    conn.comit()
+    cur.close()
+    conn.close()
 
 """
 Adds a new comment from the given user to the given exercise with title and text.
