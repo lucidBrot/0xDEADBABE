@@ -261,13 +261,14 @@ $$ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS GetExerciseComments(int);
 
 -- GET LECTURE ASSISTANTS
-CREATE OR REPLACE FUNCTION GetExerciseComments (exec_id int) 
+CREATE OR REPLACE FUNCTION GetExerciseComments (exec_id int, usr_id int) 
 RETURNS TABLE (
     Exercise_ID int,
     User_ID int,
     User_Nethz varchar(32),
     Creation_Date timestamp,
     Like_Count int,
+    User_Liked boolean,
     Title varchar(64),
     Text varchar(1024)
   )
@@ -279,6 +280,7 @@ RETURNS TABLE (
             "User".Nethz_Name, 
             Commentary.Creation_Date, 
             (SELECT COUNT(*) FROM CommentaryLike WHERE CommentaryLike.Commentary_ID = Commentary.Commentary_ID)::int as LikeCount, 
+            EXISTS (SELECT * FROM CommentaryLike WHERE CommentaryLike.Commentary_ID = Commentary.Commentary_ID AND CommentaryLike.User_ID = usr_id) as User_Liked,
             Commentary.Title, 
             Commentary.Text
       FROM Exercise
@@ -335,7 +337,7 @@ RETURNS void
 $$ LANGUAGE plpgsql; 
 
 -- GET LECTURE ASSISTANTS
-CREATE OR REPLACE FUNCTION ToggleUpvoteComment (com_id int, usr_id int) 
+CREATE OR REPLACE FUNCTION ToggleCommentUpvote (com_id int, usr_id int) 
 RETURNS boolean
   AS $$
   DECLARE comLike_id int;

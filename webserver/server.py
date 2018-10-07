@@ -120,11 +120,11 @@ def userLogin():
 @FLASK_SERVER.route('/submitRatings', methods=["POST"])
 def submitRatings():
     ratingsDictListJSON = request.form.get('ratings')
-    print("RatingsDictListJSON: "+str(ratingsDictListJSON))
+    FLASK_SERVER.logger.info("RatingsDictListJSON: "+str(ratingsDictListJSON))
     # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
     ratingsDictList = json.loads(ratingsDictListJSON)
     ratingsList = map(lambda dictionary: tuple(dictionary.values()),ratingsDictList)
-    print("ratings list: "+str(ratingsList))
+    FLASK_SERVER.logger.info("ratings list: "+str(ratingsList))
 
     user_nethz = session["nethz_cookie"]
     retStr = "Got ratings: {}".format(str(ratingsList))
@@ -174,24 +174,27 @@ def main_profile_template():
             percentage = config.RATING_SCALE_FACTOR*value
             attributes.append({"title" : title, "percentage" : percentage})
 
+        nethz = session["nethz_cookie"]
+        usr_id = SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+            
         # load comments from database
-        commentsList = SqlWrapper.GetExerciseComments(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        commentsList = SqlWrapper.GetExerciseComments(ex_ID, usr_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         comments=[]
         for comment in commentsList:
             like_count_c = -1 #JASPER
-            (_, user_id, user_nethz, creation_date, like_count_c, title_c, text_c) = comment
+            (_, user_id, user_nethz, creation_date, like_count_c, user_liked, title_c, text_c) = comment
             comments.append({
-                "title": title_c, "text": text_c, "like_count":like_count_c, "author":user_nethz
+                "title": title_c, "text": text_c, "like_count":like_count_c, "user_liked":user_liked, "author":user_nethz
                 })
         return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes,
-            comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"], TA_id=TA_id, course_id=course_id)
+            comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"], ta_id=TA_id, course_id=course_id)
     except Exception as e:
         return "Exception! {}".format(str(e))
 
 # exactly same thing again, but without comments
 @FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
 def main_profile_edit_template():
-    TA_id = request.args.get('TA_id', default=0, type = int)
+    TA_id = request.args.get('ta_id', default=0, type = int)
     course_id = request.args.get('course_id', default=0, type=int)
     # get Facts from database
     try:
@@ -203,7 +206,7 @@ def main_profile_edit_template():
             percentage = config.RATING_SCALE_FACTOR*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
-        return render_template('main_profile_edit.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"], TA_id=TA_id, course_id=course_id)
+        return render_template('main_profile_edit.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
     except Exception as e:
         return "Exception! {}".format(str(e))
 
@@ -215,7 +218,7 @@ def course():
 #    (ex_ID, assi_id, assi_nethz, lec_id, lec_name)[]
     resultlist = SqlWrapper.GetLectureExercises(course_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     # list of TA dicts: id, nethz
-    TAlist = [{'id': TA_id, 'nethz': ta_nethz} for _, TA_id, ta_nethz, __, name, in resultlist]
+    TAlist = [{'id': ta_id, 'nethz': ta_nethz} for _, ta_id, ta_nethz, __, name, in resultlist]
 
     # Setting the lecture name. If resultlist is empty for some reason, this is the default we use for now
     lec_name = "Empty lecture"
