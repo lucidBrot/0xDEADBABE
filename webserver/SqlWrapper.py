@@ -177,11 +177,24 @@ def GetExerciseComments (exercise_id, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         cur = conn.cursor()     
         cur.execute("SELECT * FROM GetExerciseComments(%s);", (exercise_id,)) 
-        ratings = cur.fetchall()
+        comments = cur.fetchall()
         conn.commit()
         cur.close()
         conn.close()
-        return ratings
+        return comments
+        
+"""
+Toggles the upvote state for a given comment for a user
+"""              
+def ToggleCommentUpvote (comment_id, user_id, dbname, user, password, host, port):
+        conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+        cur = conn.cursor()     
+        cur.execute("SELECT * FROM ToggleCommentUpvote(%s::int, %s::int);", (exercise_id, user_id)) 
+        isUpvoted = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return isUpvoted
 
 """
 Initialize Database
