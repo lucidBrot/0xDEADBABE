@@ -58,7 +58,7 @@ CREATE TABLE Rating (
 	Exercise_ID int REFERENCES Exercise ON DELETE CASCADE ON UPDATE CASCADE,
 	RatingField_ID int NOT NULL REFERENCES RatingField ON DELETE CASCADE ON UPDATE CASCADE,
 	RatingValue int NOT NULL,
-	UNIQUE (User_ID, Exercise_ID)
+	UNIQUE (User_ID, Exercise_ID, RatingField_ID)
 );
 
 -- RATING
