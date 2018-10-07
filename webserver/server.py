@@ -46,14 +46,42 @@ def initDatabase():
         print( "Init of DB Failed!<br/><br/>{}".format(str(e)))
         print("Line: {}".format(sys.exc_info()[-1].tb_lineno))
 
+# Require Login: ---------------------------------------------------------
+
+@FLASK_SERVER.before_request
+def check_valid_login():
+    """
+    Checks if a given user is logged in. A user is logged in if a value for 'user' is set in the cookie
+    of the user. The cookie is signed with the private key of the app to prevent modification
+    of the values in the cookie (Flask does that).
+    This happens before the request is handled. If the endpoint requested has the
+    decorator login_required and thus the attribute needs_login
+    the user will be redirected to the root page.
+    """
+    login_valid = session["nethz_cookie"]  # or whatever you use to check valid login
+
+    if (request.endpoint and getattr(current_app.view_functions[request.endpoint],
+                                     'needs_login', False)
+        and not login_valid):
+        return redirect("/static/userLogin.html" + request.path, code=303)
+
+
+def login_required(func):
+    """
+    This decorator marks the route to be used for logged in users only. The user must be logged in to use this route. If
+    the user is not logged in he will be redirected to the login page.
+    """
+    func.needs_login = True
+    return func
 
 # Server Routes: ---------------------------------------------------------
 
 # Sample to receive GET request and argument /?name=asdf
 @FLASK_SERVER.route('/', methods=["GET"])
 def heloworld():
-    name = request.args.get('name', default = 'Josi', type = str)
-    return "{} Helo {}<br/>{}".format(DEBUG_VERSION, name, DB_USER)
+    #name = request.args.get('name', default = 'Josi', type = str)
+    #return "{} Helo {}<br/>{}".format(DEBUG_VERSION, name, DB_USER)
+    return redirect("/static/userLogin.html")
 
 # Sample to receive post request
 @FLASK_SERVER.route('/post', methods=["POST"])
@@ -86,6 +114,7 @@ Allow client to send the database a CSV file
 nethz: their login name
 file: the csv file containing config.CSV_... content
 """
+@login_required
 @FLASK_SERVER.route('/setCSV', methods=["POST"])
 def setCSV():
     data = request.files['file'].read()
@@ -117,6 +146,7 @@ def userLogin():
 #    return retStr
     return redirect("/courses.html", code=302)
 
+@login_required
 @FLASK_SERVER.route('/submitRatings', methods=["POST"])
 def submitRatings():
     ratingsDictListJSON = request.form.get('ratings')
@@ -137,6 +167,7 @@ def submitRatings():
         retStr += "<br/>...failed: {} <br/>".format(str(e))
     return retStr
 
+@login_required
 @FLASK_SERVER.route('/submitComment', methods=["POST"])
 def submitComment():
     msg = request.form.get('message')
@@ -152,6 +183,7 @@ def submitComment():
 
 # Dynamic Templates: ------------------------------------------------------
 
+@login_required
 @FLASK_SERVER.route('/courses.html')
 def courses_template():
     try:
@@ -161,7 +193,7 @@ def courses_template():
 
     return render_template('courses.html', courses=lectures)
 
-# TA_id, course_id
+@login_required
 @FLASK_SERVER.route('/main_profile.html', methods=["GET"])
 def main_profile_template():
     TA_id = request.args.get('TA_id', default=0, type = int)
@@ -194,6 +226,7 @@ def main_profile_template():
         return "Exception! {}".format(str(e))
 
 # exactly same thing again, but without comments
+@login_required
 @FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
 def main_profile_edit_template():
     TA_id = request.args.get('TA_id', default=0, type = int)
@@ -213,6 +246,7 @@ def main_profile_edit_template():
         return "Exception! {}".format(str(e))
 
 
+@login_required
 @FLASK_SERVER.route('/course.html', methods=["GET"])
 def course():
     course_ID = request.args.get('course_id', default = '0', type = int)
