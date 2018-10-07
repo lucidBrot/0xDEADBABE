@@ -65,7 +65,7 @@ TA_id
                 <a class="nav-link" href="/static/userLogin.html">NETHZ Login</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/static/adminPage.html">Admin</a>
+                <a class="nav-link" href="/adminPage">Admin</a>
             </li>
 
         </ul>
@@ -174,8 +174,8 @@ function onCommentSubmit(){
 
 }
 </script>
-<div class="row w-100 align-items-center">
-    <p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }} </p>
+<div class="row w-100 align-items-center justify-content-between">
+    <h1 class="float-md-left" style="padding: 20px"> {{ TA_name }} - {{ lecture }} </h1>
     <a href="/main_profile.html?course_id={{course_id}}&TA_id={{TA_id}}" class="btn btn-primary float-md-right">back</a>
 </div>
 
