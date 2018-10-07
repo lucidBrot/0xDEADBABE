@@ -194,8 +194,7 @@ def main_profile_edit_template():
         ex_ID = None
         for rating in ratings:
             (ex_ID, title, value) = rating
-            # percentage = 10*points
-            percentage = 10*value
+            percentage = config.RATING_SCALE_FACTOR*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
         return render_template('main_profile_edit.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
