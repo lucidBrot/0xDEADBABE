@@ -335,7 +335,7 @@ RETURNS void
 $$ LANGUAGE plpgsql; 
 
 -- GET LECTURE ASSISTANTS
-CREATE OR REPLACE FUNCTION ToggleUpvoteComment (com_id int, usr_id int) 
+CREATE OR REPLACE FUNCTION ToggleCommentUpvote (com_id int, usr_id int) 
 RETURNS boolean
   AS $$
   DECLARE comLike_id int;
