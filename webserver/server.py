@@ -58,12 +58,12 @@ def check_valid_login():
     decorator login_required and thus the attribute needs_login
     the user will be redirected to the root page.
     """
-    login_valid = session["nethz_cookie"]  # or whatever you use to check valid login
+    login_valid = session.get("nethz_cookie")  # or whatever you use to check valid login
 
-    if (request.endpoint and getattr(current_app.view_functions[request.endpoint],
+    if (request.endpoint and getattr(FLASK_SERVER.view_functions[request.endpoint],
                                      'needs_login', False)
         and not login_valid):
-        return redirect("/static/userLogin.html" + request.path, code=303)
+        return redirect("/static/userLogin.html", code=303)
 
 
 def login_required(func):
