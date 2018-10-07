@@ -312,15 +312,15 @@ RETURNS TABLE (
   END; 
 $$ LANGUAGE plpgsql; 
 
-DROP FUNCTION IF EXISTS AddExerciseRating(int);
+DROP FUNCTION IF EXISTS AddExerciseRating(int, int, int, int);
 
 -- GET LECTURE ASSISTANTS
-CREATE OR REPLACE FUNCTION AddExerciseRating (exec_id int, ratingFld_id int, usr_id int, rating int) 
+CREATE OR REPLACE FUNCTION AddExerciseRating (exec_id int, ratingFld_id int, usr_id int, ratingVal int) 
 RETURNS void
   AS $$
   BEGIN        
 	  INSERT INTO Rating (Exercise_ID, RatingField_ID, User_ID, RatingValue)
-      VALUES (exec_id, ratingFld_id, usr_id, rating);
+      VALUES (exec_id, ratingFld_id, usr_id, ratingVal);
   END; 
 $$ LANGUAGE plpgsql; 
 
