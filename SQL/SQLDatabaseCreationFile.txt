@@ -159,7 +159,7 @@ RETURNS int AS $$
         SET IsActive = True 
         WHERE RatingField.RatingField_ID = rtf_id;
       ELSE
-        INSERT INTO RatingField (RatingField_ID)
+        INSERT INTO RatingField (Title)
         VALUES (tit)
         RETURNING RatingField.RatingField_ID
         INTO rtf_id;
