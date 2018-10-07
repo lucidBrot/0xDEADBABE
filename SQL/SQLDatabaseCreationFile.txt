@@ -284,8 +284,8 @@ RETURNS TABLE (
             Commentary.Title, 
             Commentary.Text
       FROM Exercise
-      JOIN "User" ON "User".User_ID = Exercise.Assistant_ID
       JOIN Commentary ON Commentary.Exercise_ID = Exercise.Exercise_ID
+      JOIN "User" ON "User".User_ID = Commentary.User_ID      
       WHERE Exercise.Exercise_ID = exec_id
       ORDER BY LikeCount DESC, Commentary.Creation_Date;      
   END; 

@@ -82,8 +82,8 @@ def AddExerciseRatingsFromTitles (ratings_list, user_id, dbname, user, password,
     conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
     cur = conn.cursor()
     for (exercise_id, rating_title, rating_value) in ratings_list:
-       field_id = MakeOrGetRatingField(rating_title, dbname, user, password, host, port)
-       cur.execute("DO $$ BEGIN PERFORM AddExerciseRating(%s, %s, %s, %s); END; $$;",(exercise_id, field_id, user_id, rating_value))
+       #field_id = MakeOrGetRatingField(rating_title, dbname, user, password, host, port)
+       cur.execute("DO $$ BEGIN PERFORM AddExerciseRating(%s, %s, %s, %s); END; $$;",(exercise_id, 1, user_id, rating_value))
     conn.comit()
     cur.close()
     conn.close()
