@@ -216,7 +216,7 @@ def main_profile_template():
         comments=[]
         for comment in commentsList:
             like_count_c = -1 #JASPER
-            (_, user_id, user_nethz, creation_date, like_count_c, user_liked, title_c, text_c) = comment
+            (_, user_id, nethz, creation_date, like_count_c, user_liked, title_c, text_c) = comment
             comments.append({
                 "title": title_c, "text": text_c, "like_count":like_count_c, "user_liked":user_liked, "author":user_nethz
                 })
