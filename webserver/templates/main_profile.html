@@ -9,8 +9,6 @@ comments -> comment.title
 			comment.like_count
 			comment.author
 nethzName
-course_id
-TA_id
 #}
 <html>
 
@@ -71,7 +69,11 @@ TA_id
     </div>
 </nav>
 
-<p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }}</p>
+<div class="row w-100 align-items-center">
+    <p class="h1" style="padding: 20px"> {{ TA_name }} - {{ lecture }}</p>
+    <a href="/main_profile_edit.html?course_id={{course_id}}&TA_id={{TA_id}}" class="btn btn-primary float-md-right">Add Feedback</a>
+</div>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -100,7 +102,6 @@ TA_id
         <div class="col-sm">
             <h2>
                 Comments
-                <a href="/main_profile_edit.html?course_id={{course_id}}&TA_id={{TA_id}}" class="btn btn-primary float-md-right" style="margin:5px">Give Feedback</a>
             </h2>
             <div class="card-rows">
                 {% for comment in comments %}
