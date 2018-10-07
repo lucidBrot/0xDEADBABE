@@ -11,6 +11,7 @@ from flask import session, redirect
 import random
 import sys
 import json
+import login
 
 # set up server directory for web
 STATIC_DIR = 'static'
@@ -136,6 +137,11 @@ nethz: which user logged in
 @FLASK_SERVER.route('/userLogin', methods=["POST"])
 def userLogin():
     nethz = request.form.get('nethz')
+    password = request.form.get('password')
+    # verify authentication
+    loginOkay = login.login(nethz, password)
+    if not loginOkay:
+        return redirect("/static/userLogin.html")
     retStr = "{} logged in... Tellling DB...<br/>".format(nethz)
     try:
         SqlWrapper.MakeOrGetUser(nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
