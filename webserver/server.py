@@ -10,6 +10,7 @@ from flask import render_template
 from flask import session, redirect
 import random
 import sys
+import json
 
 # set up server directory for web
 STATIC_DIR = 'static'
