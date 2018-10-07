@@ -4,3 +4,5 @@ webserver/people_pb2.py
 webserver/people_pb2_grpc.py
 .vscode
 .idea/
+.idea/workspace.xml
+.idea/workspace.xml

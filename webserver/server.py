@@ -38,14 +38,14 @@ def initDatabase():
     with open(config.SQL_INITIALIZATION_FILE, 'r') as content_file:
         sqlFile = content_file.read()
     try:
-        SqlWrapper.InitializeDatabase(sqlFile, 
+        SqlWrapper.InitializeDatabase(sqlFile,
                 DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         print("Successfully initialzed")
     except Exception as e:
         print( "Init of DB Failed!<br/><br/>{}".format(str(e)))
         print("Line: {}".format(sys.exc_info()[-1].tb_lineno))
 
-    
+
 # Server Routes: ---------------------------------------------------------
 
 # Sample to receive GET request and argument /?name=asdf
@@ -164,39 +164,38 @@ def main_profile_template():
     try:
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT) or (None, None, None, None, None)
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
-        ratings.append((23, "Swag", 4))
         attributes = []
         for rating in ratings:
             (_, title, value) = rating
             percentage = config.RATING_SCALE_FACTOR*value
             attributes.append({"title" : title, "percentage" : percentage})
-    
+
         # load comments from database
         commentsList = SqlWrapper.GetExerciseComments(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         comments=[]
-        for comment in commentsList: 
+        for comment in commentsList:
             like_count_c = -1 #JASPER
             (_, user_id, user_nethz, creation_date, like_count_c, title_c, text_c) = comment
             comments.append({
                 "title": title_c, "text": text_C, "like_count":like_count_c, "author":user_nethz
                 })
-        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes, comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"])
+        return render_template('main_profile.html',TA_name=assi_nethz, lecture=lec_name, attributes=attributes,
+            comments=comments, exercise_id=ex_ID, nethzName=session["nethz_cookie"], ta_id=TA_id, course_id=course_id)
     except Exception as e:
         return "Exception! {}".format(str(e))
 
 # exactly same thing again, but without comments
 @FLASK_SERVER.route('/main_profile_edit.html', methods=["GET"])
 def main_profile_edit_template():
-    TA_id = request.args.get('TA_id', default=0, type = int)
+    TA_id = request.args.get('ta_id', default=0, type = int)
     course_id = request.args.get('course_id', default=0, type=int)
     # get Facts from database
     try:
         (ex_ID, assi_ID, assi_nethz, lec_id, lec_name) = SqlWrapper.GetExercise(course_id, TA_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT) or (None, None, None, None, None)
         ratings = SqlWrapper.GetExerciseRatings(ex_ID, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         attributes = []
-        ex_ID = None
         for rating in ratings:
-            (ex_ID, title, value) = rating
+            (_, title, value) = rating
             percentage = config.RATING_SCALE_FACTOR*value
             attributes.append({"title" : title, "percentage" : percentage})
         comments = []
@@ -231,7 +230,7 @@ def fillDatabase():
     print(log)
 
     # Extract key and value from the dict from parseDebugCSV() and get the resp. exercise ID
-    
+
     exercise_ids = [SqlWrapper.MakeOrGetExercise(line['ta_nethz'], line['lecture_name'], DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
                         for line in data]
     fake_reviewers_nethz = ["alibaba", "unclebens", "suntzu"]
@@ -247,17 +246,17 @@ def fillDatabase():
         rating_title_ids.append(title_id)
 
     ratings = []
-    for ex_id in exercise_ids:
+    for ex_ID in exercise_ids:
         for title_id in rating_title_ids:
             value = random.randint(1,5)
-            ratings.append((ex_id, title_id, value))
+            ratings.append((ex_ID, title_id, value))
     try:
         for reviewer_id in fake_reviewers_ids:
             SqlWrapper.AddExerciseRatings(ratings, reviewer_id, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
     except Exception as e:
         print("Exception! {}".format(str(e)))
         print("Line: {}".format(sys.exc_info()[-1].tb_lineno))
-    
+
 
 
 """
@@ -284,7 +283,7 @@ def dbInitializeTeachingAssistants(csvData):
     # For data row, add to database if needed
     for i in range(len(csvData)):
         try:
-            returnString += "<br/>Adding ({0},{1})".format(csvData[i][config.CSV_TA_NETHZ], csvData[i][config.CSV_LECTURE_NAME]) 
+            returnString += "<br/>Adding ({0},{1})".format(csvData[i][config.CSV_TA_NETHZ], csvData[i][config.CSV_LECTURE_NAME])
             SqlWrapper.MakeOrGetExercise(
                     csvData[i][config.CSV_TA_NETHZ], csvData[i][config.CSV_LECTURE_NAME],
                     DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
