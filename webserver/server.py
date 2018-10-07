@@ -129,7 +129,7 @@ def submitRatings():
     user_nethz = session["nethz_cookie"]
     retStr = "Got ratings: {}".format(str(ratingsList))
     try:
-        SqlWrapper.AddExerciseRatings(ratingsList, user_nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
+        SqlWrapper.AddExerciseRatingsFromTitles(ratingsList, user_nethz, DB_NAME, DB_USER, DB_PW, DB_URL, DB_PORT)
         retStr+="<br/>...done."
     except Exception as e:
         retStr += "<br/>...failed: {} <br/>".format(str(e))
