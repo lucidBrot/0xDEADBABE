@@ -69,7 +69,7 @@ def AddExerciseRatings (ratings_list, user_id, dbname, user, password, host, por
         cur = conn.cursor()
         # ratings_list is a list of several (Exercise_ID, Rating_Title, Rating_Value)
         for (exercise_id, ratingField_id, rating_value) in ratings_list:
-            cur.execute("DO $$ BEGIN PERFORM AddExerciseRatings(%s, %s, %s, %s); END; $$;",(exercise_id, ratingField_id, user_id, rating_value))
+            cur.execute("DO $$ BEGIN PERFORM AddExerciseRating(%s, %s, %s, %s); END; $$;",(exercise_id, ratingField_id, user_id, rating_value))
         conn.commit()
         cur.close()
         conn.close()
