@@ -122,7 +122,7 @@ def submitRatings():
     ratingsDictListJSON = request.form.get('ratings')
     # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
     ratingsDictList = json.loads(ratingsDictListJSON)
-    ratingsList = ratingsDictList.map(lambda dictionary: dictionary.values())
+    ratingsList = ratingsDictList.map(lambda dictionary: tuple(dictionary.values()))
 
     user_nethz = session["nethz_cookie"]
     retStr = "Got ratings: {}".format(str(ratingsList))
