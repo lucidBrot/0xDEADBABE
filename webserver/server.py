@@ -120,11 +120,13 @@ def userLogin():
 @FLASK_SERVER.route('/submitRatings', methods=["POST"])
 def submitRatings():
     ratingsDictListJSON = request.form.get('ratings')
-    FLASK_SERVER.logger.debug("RatingsDictListJSON: "+str(ratingsDictListJSON))
+    FLASK_SERVER.logger.warning("RatingsDictListJSON: "+str(ratingsDictListJSON))
     # ratingsDictJSON contains keys and values as a dictionary. And that repeated, in a list.
     ratingsDictList = json.loads(ratingsDictListJSON)
-    ratingsList = map(lambda dictionary: tuple(dictionary.values()),ratingsDictList)
-    FLASK_SERVER.logger.debug("ratings list: "+str(ratingsList))
+    ratingsList = map(lambda dictionary: (dictionary['exercise_id'],
+                                          dictionary['rating_title'],
+                                          dictionary['rating_value']), ratingsDictList)
+    FLASK_SERVER.logger.warning("ratings list: "+str(list(ratingsList)))
 
     user_nethz = session["nethz_cookie"]
     retStr = "Got ratings: {}".format(str(ratingsList))
