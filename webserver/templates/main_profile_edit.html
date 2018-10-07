@@ -136,9 +136,11 @@ nethzName
 
         });
         jsonFile = JSON.stringify(data, getCircularReplacer());
+        var ratings = new FormData();
+        ratings.append('ratings',jsonFile);
         fetch('/submitRatings', {
             method: 'POST',
-            body: jsonFile
+            body: ratings
         }).then(function (response) {
             //$(this).setAttribute()
             return console.log(response.text());
