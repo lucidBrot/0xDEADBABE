@@ -262,6 +262,11 @@ def course():
         (_, _, _, _, lec_name) = resultlist[0]
     return render_template('course.html',course_id = course_ID, TA_data=TAlist, course_name=lec_name)
 
+@login_required
+@FLASK_SERVER.route('/adminPage')
+def adminPage():
+    return render_template('adminPage.html')
+
 
 # CSV Logic: --------------------------------------------------------------
 
